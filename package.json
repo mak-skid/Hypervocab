@@ -1,0 +1,48 @@
+{
+  "name": "Hypervocab",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "android": "react-native run-android",
+    "ios": "react-native run-ios",
+    "start": "react-native start",
+    "test": "jest",
+    "lint": "eslint ."
+  },
+  "dependencies": {
+    "@expo/react-native-action-sheet": "3.12.0",
+    "@react-native-admob/admob": "2.0.0",
+    "@react-native-async-storage/async-storage": "1.15.14",
+    "@react-native-picker/picker": "2.2.1",
+    "@react-navigation/bottom-tabs": "6.0.9",
+    "@react-navigation/native": "6.0.6",
+    "@react-navigation/stack": "6.0.11",
+    "react": "17.0.2",
+    "react-native": "0.66.4",
+    "react-native-elements": "3.4.2",
+    "react-native-gesture-handler": "2.1.0",
+    "react-native-localization": "2.1.7",
+    "react-native-picker-select": "8.0.4",
+    "react-native-prompt-android": "1.1.0",
+    "react-native-safe-area-context": "3.3.2",
+    "react-native-screens": "3.10.1",
+    "react-native-share-menu": "5.0.5",
+    "react-native-sound": "0.11.1",
+    "react-native-sqlite-storage": "6.0.1",
+    "react-native-vector-icons": "9.0.0",
+    "react-redux": "7.2.6"
+  },
+  "devDependencies": {
+    "@babel/core": "7.16.5",
+    "@babel/runtime": "7.16.5",
+    "@react-native-community/eslint-config": "3.0.1",
+    "babel-jest": "27.4.5",
+    "eslint": "8.5.0",
+    "jest": "27.4.5",
+    "metro-react-native-babel-preset": "0.66.2",
+    "react-test-renderer": "17.0.2"
+  },
+  "jest": {
+    "preset": "react-native"
+  }
+}
