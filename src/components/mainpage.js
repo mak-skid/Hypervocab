@@ -28,9 +28,10 @@ export default function RootStack() {
                         name="DictionaryStackScreen"
                         component={DictionaryStackScreen}
                         options={{
+                            //tabBarShowLabel: false,
                             tabBarLabel: 'Dictionary',
                             tabBarIcon: (color) => (
-                              <Icon name='book-open-page-variant' type='material-community' size={35} color={color.color} />
+                              <Icon name='book-open-page-variant' type='material-community' size={33} color={color.color} />
                             ),
                           }}
                         />
@@ -38,6 +39,7 @@ export default function RootStack() {
                         name="MemoriseStackScreen"
                         component={MemoriseStackScreen}
                         options={{
+                            //tabBarShowLabel: false,
                             tabBarLabel: 'Memorise',
                             tabBarIcon: (color) => (
                               <Icon name='head-sync' type='material-community' size={40} color={color.color} />
@@ -48,6 +50,7 @@ export default function RootStack() {
                         name="FolderStackScreen"
                         component={FoldersStackScreen}
                         options={{
+                            //tabBarShowLabel: false,
                             tabBarLabel: 'Folders',
                             tabBarIcon: (color) => (
                               <Icon name='folder-multiple' type='material-community' size={30} color={color.color} />
