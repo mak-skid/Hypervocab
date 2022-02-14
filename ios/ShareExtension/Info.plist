@@ -23,7 +23,7 @@
 	<key>HostAppBundleIdentifier</key>
 	<string>org.reactjs.native.example.Hypervocab</string>
 	<key>HostAppURLScheme</key>
-	<string>org.reactjs.native.example.Hypervocab://</string>
+	<string>ShareMenuModule://</string>
 	<!-- This url scheme CONTAINS :// at the end - E.G. "mycustomscheme://"-->
 	<key>NSAppTransportSecurity</key>
 	<dict>

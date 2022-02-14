@@ -1,5 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
+import { Icon, SearchBar } from 'react-native-elements';
 import { ShareMenuReactView } from 'react-native-share-menu';
+import { StyleSheet, View, Text, Pressable } from 'react-native';
 
 /*
 const Button = ({onPress, title, style}) => (
@@ -85,11 +87,9 @@ const styles = StyleSheet.create({
 });
 */
 
-
-
 function Share() {
-    ShareMenuReactView.continueInApp()
-    return null;
+    ShareMenuReactView.continueInApp();
+    return <></>;
 }
 
 export default Share;

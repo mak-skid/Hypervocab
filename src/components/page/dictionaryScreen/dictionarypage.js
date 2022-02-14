@@ -76,7 +76,7 @@ function DictionaryScreen(props) {
 
     const handleShare = useCallback((item) => {
         if (!item) {
-            console.log("app", item);
+            console.log("passing failed", item);
             return ;
         }
 
