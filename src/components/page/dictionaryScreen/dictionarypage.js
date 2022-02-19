@@ -261,8 +261,6 @@ function DictionaryScreen(props) {
             console.log(viewableItems);
         }).current;
         
-        
-
         const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50}).current;
 
         if (isLoading) {
@@ -321,7 +319,7 @@ function DictionaryScreen(props) {
                                         <Text style={{color:'lightgrey', fontStyle:'italic', fontSize:18}}>{item.example}</Text>
                                         {(item.synonyms.length || item.antonyms.length > 0) &&
                                             <TouchableOpacity onPress={() => onPressHandler(item)} style={{alignItems:'flex-start'}}>
-                                                {!isThesaurusVisibleIndex.includes(item)&&
+                                                {!isThesaurusVisibleIndex.includes(item) &&
                                                 <Icon name='ellipsis1' type='antdesign' color='white' />
                                                 }
                                                 {isThesaurusVisibleIndex.includes(item) &&

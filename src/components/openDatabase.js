@@ -1,15 +1,17 @@
 import SQLite from 'react-native-sqlite-storage';
 
-const successCB = () => { console.log("successfully opened db")};
-const errorCB = error => { console.log("ERROR: " + error)};
+const successEjDictOP = () => {console.log("successfully opened ejdictDB")};
+const successUserDBOP = () => {console.log('successfully opened UserDatabase')};
+const errorCB = error => {console.log("ERROR: " + error)};
 
 const ejdictdb = SQLite.openDatabase(
     {
         name: 'ejdict.db',
+        readOnly: true,
         createFromLocation: 1,
         location: 'Documents',
     },
-    successCB, errorCB
+    successEjDictOP, errorCB
 );
 
 const UserDatabaseDB = SQLite.openDatabase(
@@ -18,7 +20,7 @@ const UserDatabaseDB = SQLite.openDatabase(
         createFromLocation: 1,
         location: 'Documents',
     },
-    successCB, errorCB
+    successUserDBOP, errorCB
 );
 
 export {ejdictdb, UserDatabaseDB}
