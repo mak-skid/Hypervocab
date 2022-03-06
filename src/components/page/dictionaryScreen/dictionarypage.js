@@ -156,7 +156,7 @@ function DictionaryScreen(props) {
                         if (data.title) {
                             Alert.alert(data.title, data.message);
                         } else {
-                            props.updateCardData(data)
+                            props.updateCardData(data);
                         }
                         setLoading(false);
                     })
@@ -356,7 +356,7 @@ function DictionaryScreen(props) {
                                 {props.cardData[index].phonetics.map((item, index)=> 
                                     <View style={{flexDirection:'row'}}>
                                         {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={index}>| {item.text} |</Text>}
-                                        {item.audio != undefined && <AudioPlayer url={item.audio}/>}
+                                        {item.audio != (undefined || "") && <AudioPlayer url={item.audio}/>}
                                     </View>)}
                                 {props.cardData[index].meanings.map(mappedDifinition)}
                                 {props.cardData[index].origin != undefined && 

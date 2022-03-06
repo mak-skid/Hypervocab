@@ -5,13 +5,14 @@ import { strings } from './strings';
 
 export const AudioPlayer = (props) => {
     const { url } = props
+    console.log("url: ", url);
 
     var Sound = require('react-native-sound');
 
     Sound.setCategory('Playback');
 
     var audio = new Sound(
-        `https:${url}`,
+        `${url}`,
         null,
         error => {
             if (error) {
