@@ -181,7 +181,6 @@ const SwipeCard = (props) => {
                             )
                         }
                         <FlatList
-                            style={{backgroundColor:'black'}}
                             data={parsedMeanings}
                             scrollEnabled={false}
                             keyExtractor={(item, index) => 'key'+index}
@@ -189,17 +188,16 @@ const SwipeCard = (props) => {
                                 const childData = parsedMeanings[index].definitions;
                                 return (
                                     <View>
-                                        <Text style={{color: 'grey', fontSize:18, backgroundColor:'black', marginTop: 10}}>{item.partOfSpeech}</Text>
+                                        <Text style={{color: 'grey', fontSize:18, marginTop: 10}}>{item.partOfSpeech}</Text>
                                         <FlatList
-                                            style={{backgroundColor: 'black'}}
                                             data={childData}
                                             scrollEnabled={false}
                                             keyExtractor={(item, index)=> 'key(childData)' + index}
                                             renderItem={({item, index}) => {
                                                 return (
                                                     <View>
-                                                        <Text style={{color:'white',fontSize:18, backgroundColor:'black', borderRadius:5, borderColor:'black', borderWidth:1}}>{item.definition}</Text>
-                                                        <Text style={{color:'grey',fontSize:18, fontStyle: 'italic', backgroundColor:'black', borderRadius:5, borderColor:'black', borderWidth:1}}> 
+                                                        <Text style={{color:'white',fontSize:18, borderRadius:5, borderColor:'black', borderWidth:1}}>{item.definition}</Text>
+                                                        <Text style={{color:'grey',fontSize:18, fontStyle: 'italic', borderRadius:5, borderColor:'black', borderWidth:1}}> 
                                                             {item.example} 
                                                         </Text>
                                                     </View>
@@ -211,22 +209,22 @@ const SwipeCard = (props) => {
                             }}
                         /> 
                         <Text style={{color:'white', fontWeight: 'bold', fontSize:18, marginTop:10}}>{strings.origin}</Text>
-                        <Text style={{color:'white',fontSize:18, backgroundColor:'black'}}>{item.origin}</Text>
+                        <Text style={{color:'white',fontSize:18}}>{item.origin}</Text>
                     </View>
                 )
             }
         }
-       
+    
         return (
             <View>
-                <Card containerStyle={{backgroundColor:'black', width: width*0.9, borderRadius:5, margin:width*0.05, height: height*0.65}}>
-                    <Pressable onPress={() => setShowContent(true)} disabled={showContent} style={{height:height*0.65-width*0.1}}>
-                        <ScrollView showsVerticalScrollIndicator={false} scrollEnabled={showContent} style={{flex:1}}>
-                            <Text style={{color:'white',fontSize:30,fontWeight:"bold", margin:10}}>
+                <Card containerStyle={{backgroundColor:'black', borderRadius:5, width:width*0.9, flex: 1}}>
+                    <Pressable onPress={() => setShowContent(true)} disabled={showContent} style={{height: height*0.65}} >
+                        <ScrollView showsVerticalScrollIndicator={false} scrollEnabled={showContent} contentContainerStyle={{flex:1, flexDirection:'column'}}>
+                            <Text style={{color:'white',fontSize:30, fontWeight:"bold"}}>
                                 {item.word}
                             </Text>
                             {showContent ? <MainContent /> : 
-                                <View style={{height:(height*0.7-width*0.1)*0.8, justifyContent:'center', alignItems:'center'}}>
+                                <View style={{justifyContent:'center', alignItems:'center', flex:1}}>
                                     <Text style={{color:'white', fontSize:20}}>{strings.answer}</Text>
                                 </View>
                             }                        
@@ -234,7 +232,7 @@ const SwipeCard = (props) => {
                     </Pressable>
                 </Card>
                 {showContent ? 
-                    <View style={{justifyContent:'flex-end'}}>
+                    <View style={{justifyContent:'flex-end', backgroundColor:'black'}}>
                         <View style={{flexDirection: 'row', justifyContent:'space-evenly', margin:10 }}>
                             <Button icon={<Icon name='close' type='material-community' color='white'/>} buttonStyle={{backgroundColor:'red', borderRadius:20, width: width*0.2}} onPress={() => onPressHandler(index) & updateLevelNo({item_id: item.item_id})}/>
                             <Button icon={<Icon name='triangle-outline' type='material-community' color='white'/>} buttonStyle={{backgroundColor:'orange', borderRadius:20, width: width*0.2}} onPress={() => onPressHandler(index) & updateLevelSoSo({item_id: item.item_id, level: item.level})}/>
@@ -281,9 +279,9 @@ const SwipeCard = (props) => {
                             <Text style={{color:'grey', fontSize:20}}>{strings.noCardInFolder}</Text>
                         </View>
                     }
-                />                
+                />
+                <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />                
             </SafeAreaView>
-            <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
         </View>
     )
 }

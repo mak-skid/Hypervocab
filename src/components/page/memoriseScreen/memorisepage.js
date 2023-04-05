@@ -48,9 +48,9 @@ function MemoriseScreen(props) {
                             <Text style={{color:'grey', fontSize:20}}>{strings.noFolder}</Text>
                         </View>
                     }
-                />
+                /> 
+                <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
             </SafeAreaView>
-            <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
         </View>  
     );
 }
