@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
-import { View, SafeAreaView, FlatList, StyleSheet, Text, ScrollView, Alert, StatusBar} from 'react-native';
+import { View, SafeAreaView, FlatList, StyleSheet, Text, ScrollView, Alert, StatusBar, Platform} from 'react-native';
 import { Header, Icon } from 'react-native-elements';
 import { styles, width, height } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
 import { connect } from 'react-redux';
-// @ts-expect-error TS(6142): Module '../../ItemBox' was resolved to '/Users/Mak... Remove this comment to see the full error message
 import { ItemBox } from '../../ItemBox';
 import prompt from 'react-native-prompt-android';
 import { UserDatabaseDB } from '../../openDatabase';
@@ -129,21 +128,15 @@ function FolderScreen(props: any) {
                     console.log('edited a table name: ' + prevValue);
                     setReloadScreen(true);
                 },
-                // @ts-expect-error TS(2551): Property 'FailedEditingFolderName' does not exist ... Remove this comment to see the full error message
-                () => Alert.alert(strings.error, strings.FailedEditingFolderName)
+                () => Alert.alert(strings.error, strings.failedEditingFolderName)
                 )
             })
         }   
     }
 
-    const foldersRenderItem = ({
-        item,
-        index
-    }: any)=> {
+    const foldersRenderItem = ({item,index}: any)=> {
         return(
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-            <ScrollView vertical>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+            <ScrollView> 
                 <ItemBox 
                     data={item.name} 
                     handleDelete={() => deleteDialog(item)}
@@ -155,48 +148,34 @@ function FolderScreen(props: any) {
     }
 
     return (
-        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-            <StatusBar style='light'/>
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+            <StatusBar barStyle='light-content'/>
             <SafeAreaView style={{
                 backgroundColor: 'black',
                 alignItems: 'stretch',
                 justifyContent: 'space-between',
                 flex: 1,
                 }}>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <Header 
                     backgroundColor='black'
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
-                    rightComponent={
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                        <Icon 
-                            name='addfolder'
-                            type='antdesign'
-                            color='white'
-                            onPress={() => createDialog()}
-                        />
+                    rightComponent={     
+                        <Icon name='addfolder' type='antdesign' color='white' onPress={() => createDialog()} tvParallaxProperties={undefined}/>
                     }
                     centerComponent={{text: strings.folders, style:{color: 'white', fontSize:20}}}
                     />
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <FlatList
                     style={{backgroundColor:'black'}}
                     data={props.folderList}
                     renderItem={foldersRenderItem}
                     keyExtractor={(item) => item.name}
-                    ListEmptyComponent={
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                    ListEmptyComponent={  
                         <View style={{alignItems: 'center', marginTop: height*0.2}}>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Text style={{color:'grey', fontSize:20}}>{strings.noFolder}</Text>
                         </View>
                     }
                 />   
                 </SafeAreaView>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
         </View>         
     );

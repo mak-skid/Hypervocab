@@ -1,10 +1,10 @@
-
 export type Action = 
     | { type: "updateTextInput", payload: string }
     | { type: 'updateCardData', payload: string}
     | { type: 'updateFavDictionaries', payload: string}
     | { type: 'updateFolderList', payload: string}
     | { type: 'updateSavedWordList', payload: string | number}
+    | { type: 'updateSelectedLanguage', payload: string}
 
 export const updateTextInput = (inputWord: string): Action => (
     {
@@ -38,5 +38,12 @@ export const updateSavedWordList = (savedWordList: ( string | number )): Action 
     {
         type: 'updateSavedWordList',
         payload: savedWordList
+    }
+)
+
+export const updateSelectedLanguage = (selectedLanguage: string): Action => (
+    {
+        type: 'updateSelectedLanguage',
+        payload: selectedLanguage
     }
 )

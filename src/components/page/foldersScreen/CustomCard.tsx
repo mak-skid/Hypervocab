@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Alert, StatusBar } from 'react-native';
+import { View, ScrollView, Alert, StatusBar, Platform } from 'react-native';
 import { Header, Icon, Card } from 'react-native-elements';
 import { styles, width } from '../style';
 import { TextInput } from 'react-native';
@@ -26,8 +26,7 @@ const CustomCard = (props: any) => {
             (_: any, results: any) => {
                 console.log('saved word');
                 setReloadScreen(true);
-                // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
-                Alert.alert(null, strings.createdSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}])
+                Alert.alert('', strings.createdSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}])
             },
             () => alert(strings.errorSaving)
             )
@@ -48,28 +47,19 @@ const CustomCard = (props: any) => {
         })
     }
 
-    return (
-        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+    return ( 
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-            <StatusBar style='light'/>
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-            <View style={{backgroundColor:'black', flex:1}}>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+            <StatusBar barStyle='light-content'/>
+            <View style={{backgroundColor:'black', flex:1}}>    
                 <Header 
                     backgroundColor='black'
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={()=> navigation.navigate('BrowseFolder')}/>}
+                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('BrowseFolder')} tvParallaxProperties={undefined}/>}
                     centerComponent={{text: 'Create a card', style:{color: 'white', fontSize:20}}}
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                    rightComponent={<Icon name='save-alt' type='material' color='white' onPress={()=> SaveCustomCard()}/>}
+                    rightComponent={<Icon name='save-alt' type='material' color='white' onPress={() => SaveCustomCard()} tvParallaxProperties={undefined}/>}
                 />
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                <ScrollView vertical>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                <ScrollView>
                 <Card containerStyle={{backgroundColor:'black', width: width*0.9, borderRadius:5}}>
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <TextInput 
                         style={{color:'white',fontSize:30,fontWeight:"bold",marginVertical:10}} 
                         defaultValue={isEditCardWordValue}
@@ -77,7 +67,6 @@ const CustomCard = (props: any) => {
                         placeholderTextColor="grey" 
                         onChangeText={setEditCardWordValue}
                         />
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <TextInput 
                         style={{color:'white',fontSize:18}} 
                         multiline={true} 
@@ -91,7 +80,6 @@ const CustomCard = (props: any) => {
                 </Card>
                 </ScrollView>
             </View>
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
         </View>
     )

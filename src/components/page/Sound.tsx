@@ -23,7 +23,7 @@ export const AudioPlayer = (props: any) => {
         }
     )
     
-    const [playing, setPlaying] = useState();
+    const [playing, setPlaying] = useState<boolean>();
     
     useEffect(() => {
         audio.setVolume(1);
@@ -35,18 +35,14 @@ export const AudioPlayer = (props: any) => {
     const playPause = () => {
         if (audio.isPlaying()) {
             audio.pause();
-            // @ts-expect-error TS(2345): Argument of type 'false' is not assignable to para... Remove this comment to see the full error message
             setPlaying(false);
         } else {
-            // @ts-expect-error TS(2345): Argument of type 'true' is not assignable to param... Remove this comment to see the full error message
             setPlaying(true);
             audio.play((success: any) => {
             if (success) {
-                // @ts-expect-error TS(2345): Argument of type 'false' is not assignable to para... Remove this comment to see the full error message
                 setPlaying(false);
                 console.log('successfully finished playing');
             } else {
-                // @ts-expect-error TS(2345): Argument of type 'false' is not assignable to para... Remove this comment to see the full error message
                 setPlaying(false);
                 console.log('playback failed due to audio decoding errors');
                 Alert.alert(strings.error, strings.failedToLoadTheSound);
@@ -55,7 +51,6 @@ export const AudioPlayer = (props: any) => {
         }
     };
     return (
-        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <TouchableOpacity 
             style={{
                 marginHorizontal:10,
@@ -65,7 +60,7 @@ export const AudioPlayer = (props: any) => {
                 }} 
             onPress={playPause}
         >
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+
             <Icon
                 type='ionicon'
                 name={playing ? 'pause' : 'play'}

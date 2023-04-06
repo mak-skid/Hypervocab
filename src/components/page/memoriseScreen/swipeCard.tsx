@@ -1,12 +1,11 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { View, SafeAreaView, FlatList, Text, ScrollView, Alert, Pressable, StatusBar } from 'react-native';
+import { View, SafeAreaView, FlatList, Text, ScrollView, Alert, Pressable, StatusBar, Platform} from 'react-native';
 import { Header, Icon, Button, Card } from 'react-native-elements';
 import { height, styles, width } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
 import { connect } from 'react-redux';
 import { UserDatabaseDB } from '../../openDatabase';
 import { useFocusEffect } from '@react-navigation/native';
-// @ts-expect-error TS(6142): Module '../Sound' was resolved to '/Users/Mak/Hype... Remove this comment to see the full error message
 import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
@@ -36,9 +35,7 @@ const SwipeCard = (props: any) => {
 
     useFocusEffect(DatabaseAccess);
     
-    const updateLevelNo = ({
-        item_id
-    }: any) => {   
+    const updateLevelNo = ({item_id}: any) => {   
         UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(
                 `UPDATE "${FolderToMemorise}" SET level = 1, due_date = ${time.setMinutes(time.getMinutes()+1)} WHERE item_id = ${item_id};`, [],
@@ -52,10 +49,7 @@ const SwipeCard = (props: any) => {
         })
     }
 
-    const updateLevelSoSo = ({
-        item_id,
-        level
-    }: any) => {
+    const updateLevelSoSo = ({item_id,level}: any) => {
         UserDatabaseDB.transaction((tx: any) => {
             switch (level) {
                 case 0:
@@ -89,10 +83,7 @@ const SwipeCard = (props: any) => {
         })
     }
 
-    const updateLevelGood = ({
-        item_id,
-        level
-    }: any) => {
+    const updateLevelGood = ({item_id,level}: any) => {
         UserDatabaseDB.transaction((tx: any) => {
             switch (level) {
                 case 0:
@@ -156,17 +147,13 @@ const SwipeCard = (props: any) => {
 
     const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50}).current;
 
-    const refContainer = useRef(null);
+    const refContainer = useRef<any>(null);
 
-    const mainRenderItem = ({
-        item,
-        index
-    }: any) => {
+    const mainRenderItem = ({item,index}: any) => {
         const onPressHandler = (index: any) => {
             if (savedWordList.length === 1) {
                 Alert.alert(strings.finished, strings.finishedDetail);
             } else {
-                // @ts-expect-error TS(2531): Object is possibly 'null'.
                 refContainer.current.scrollToIndex({animated: true, index: index});
             }
         }
@@ -174,11 +161,8 @@ const SwipeCard = (props: any) => {
         const MainContent = () => {
             if (item.mean) {
                 return (
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <View>
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                        <ScrollView showsVerticalScrollIndicator={true} vertical>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                        <ScrollView showsVerticalScrollIndicator={true}>  
                             <Text style={{color:'white',fontSize:18}}>
                                 {item.mean.replaceAll("/","\n\n")}
                             </Text>
@@ -189,42 +173,31 @@ const SwipeCard = (props: any) => {
                 const parsedMeanings = JSON.parse(unescape(item.meanings))
                 const parsedPhonetics = JSON.parse(unescape(item.phonetics))
 
-                return (
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                return (    
                     <View>
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                        {parsedPhonetics.map((item: any) => <View style={{flexDirection: 'row'}}>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                            {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={index}>| {item.text} |</Text>}
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                            {item.audio != undefined && <AudioPlayer url={item.audio}/>}
-                        </View>
-                            )
-                        }
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                        {parsedPhonetics.map((item: any) => 
+                            <View style={{flexDirection: 'row'}}>  
+                                {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={index}>| {item.text} |</Text>}
+                                {item.audio != undefined && <AudioPlayer url={item.audio}/>}
+                            </View>
+                        )}
                         <FlatList
                             data={parsedMeanings}
                             scrollEnabled={false}
                             keyExtractor={(item, index) => 'key'+index}
                             renderItem={({item, index})=> {
                                 const childData = parsedMeanings[index].definitions;
-                                return (
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                                return (           
                                     <View>
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         <Text style={{color: 'grey', fontSize:18, marginTop: 10}}>{item.partOfSpeech}</Text>
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         <FlatList
                                             data={childData}
                                             scrollEnabled={false}
                                             keyExtractor={(item, index)=> 'key(childData)' + index}
                                             renderItem={({item, index}) => {
                                                 return (
-                                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                     <View>
-                                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                         <Text style={{color:'white',fontSize:18, borderRadius:5, borderColor:'black', borderWidth:1}}>{item.definition}</Text>
-                                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                         <Text style={{color:'grey',fontSize:18, fontStyle: 'italic', borderRadius:5, borderColor:'black', borderWidth:1}}> 
                                                             {item.example} 
                                                         </Text>
@@ -236,9 +209,7 @@ const SwipeCard = (props: any) => {
                                 )
                             }}
                         /> 
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         <Text style={{color:'white', fontWeight: 'bold', fontSize:18, marginTop:10}}>{strings.origin}</Text>
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         <Text style={{color:'white',fontSize:18}}>{item.origin}</Text>
                     </View>
                 );
@@ -246,23 +217,15 @@ const SwipeCard = (props: any) => {
         }
     
         return (
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <View>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                <Card containerStyle={{backgroundColor:'black', borderRadius:5, width:width*0.9, flex: 1}}>
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                <Card containerStyle={{backgroundColor:'black', borderRadius:5, width:width*0.9, flex: 1}}>  
                     <Pressable onPress={() => setShowContent(true)} disabled={showContent} style={{height: height*0.65}} >
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         <ScrollView showsVerticalScrollIndicator={false} scrollEnabled={showContent} contentContainerStyle={{flex:1, flexDirection:'column'}}>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Text style={{color:'white',fontSize:30, fontWeight:"bold"}}>
                                 {item.word}
                             </Text>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             {showContent ? <MainContent /> : 
-                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                 <View style={{justifyContent:'center', alignItems:'center', flex:1}}>
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <Text style={{color:'white', fontSize:20}}>{strings.answer}</Text>
                                 </View>
                             }                        
@@ -270,16 +233,11 @@ const SwipeCard = (props: any) => {
                     </Pressable>
                 </Card>
                 {showContent ? 
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <View style={{justifyContent:'flex-end', backgroundColor:'black'}}>
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         <View style={{flexDirection: 'row', justifyContent:'space-evenly', margin:10 }}>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                            <Button icon={<Icon name='close' type='material-community' color='white'/>} buttonStyle={{backgroundColor:'red', borderRadius:20, width: width*0.2}} onPress={() => onPressHandler(index) & updateLevelNo({item_id: item.item_id})}/>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                            <Button icon={<Icon name='triangle-outline' type='material-community' color='white'/>} buttonStyle={{backgroundColor:'orange', borderRadius:20, width: width*0.2}} onPress={() => onPressHandler(index) & updateLevelSoSo({item_id: item.item_id, level: item.level})}/>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                            <Button icon={<Icon name='circle-outline' type='material-community' color='white'/>} buttonStyle={{borderRadius:20, width: width*0.2}} onPress={() => onPressHandler(index) & updateLevelGood({item_id: item.item_id, level: item.level})}/>
+                            <Button icon={<Icon name='close' type='material-community' color='white' tvParallaxProperties={undefined}/>} buttonStyle={{backgroundColor:'red', borderRadius:20, width: width*0.2}} onPress={() => [onPressHandler(index), updateLevelNo({item_id: item.item_id})]}/>
+                            <Button icon={<Icon name='triangle-outline' type='material-community' color='white' tvParallaxProperties={undefined}/>} buttonStyle={{backgroundColor:'orange', borderRadius:20, width: width*0.2}} onPress={() => [onPressHandler(index), updateLevelSoSo({item_id: item.item_id, level: item.level})]}/>
+                            <Button icon={<Icon name='circle-outline' type='material-community' color='white' tvParallaxProperties={undefined}/>} buttonStyle={{borderRadius:20, width: width*0.2}} onPress={() => [onPressHandler(index), updateLevelGood({item_id: item.item_id, level: item.level})]}/>
                         </View>
                     </View>
                  : 
@@ -289,27 +247,21 @@ const SwipeCard = (props: any) => {
         )
     }
 
-    return (
-        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+    return (   
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-            <StatusBar style='light'/>
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+            <StatusBar barStyle='light-content'/>
             <SafeAreaView style={{
                 backgroundColor: 'black',
                 alignItems: 'center',
                 flex: 1,
                 }}>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <Header 
                     backgroundColor='black'
-                    containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={()=> navigation.navigate('MemoriseScreen')}/>}
+                    containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }} 
+                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('MemoriseScreen')} tvParallaxProperties={undefined}/>}
                     centerComponent={{text: strings.memorise, style:{color: 'white', fontSize:20}}}
                     rightComponent={{text: (props.savedWordList.length != 0) ? /*(currentIndex+1) + '/'*/ props.savedWordList.length : null, style:{color: 'white', fontSize:20}}}
                     />
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <FlatList
                     style={{backgroundColor:'black'}}
                     horizontal={true}
@@ -323,15 +275,12 @@ const SwipeCard = (props: any) => {
                     onViewableItemsChanged={viewableItemsChanged}
                     onScroll={() => setShowContent(false)}
                     ref={refContainer}
-                    ListEmptyComponent={
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                    ListEmptyComponent={  
                         <View style={{alignItems: 'center', margin: width*0.1}}>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Text style={{color:'grey', fontSize:20}}>{strings.noCardInFolder}</Text>
                         </View>
                     }
                 />
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />                
             </SafeAreaView>
         </View>

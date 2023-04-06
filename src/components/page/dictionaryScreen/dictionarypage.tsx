@@ -1,24 +1,20 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { View, SafeAreaView, TextInput, TouchableOpacity, ScrollView, Dimensions, Modal, FlatList, Alert, Animated, StatusBar} from 'react-native';
+import { View, SafeAreaView, TextInput, TouchableOpacity, ScrollView, Dimensions, Modal, FlatList, Alert, Animated, StatusBar, Pressable, Platform} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { styles, width, height } from '../style';
 import { connect } from 'react-redux';
 import { updateCardData, updateFolderList, updateSavedWordList, updateFavDictionaries } from '../../../actions';
 import { Card, Button, Text } from 'react-native-elements';
-// @ts-expect-error TS(6142): Module '../../ItemBox' was resolved to '/Users/Mak... Remove this comment to see the full error message
 import { itemBoxStyles } from '../../ItemBox';
 import { ejdictdb, UserDatabaseDB } from '../../openDatabase';
 import { FAB } from 'react-native-elements';
-// @ts-expect-error TS(6142): Module './Pagination' was resolved to '/Users/Mak/... Remove this comment to see the full error message
 import Paginator from './Pagination';
 import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
 import { DictionaryList } from './DictionaryList';
 import { useFocusEffect } from '@react-navigation/native';
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'reac... Remove this comment to see the full error message
 import ShareMenu from 'react-native-share-menu';
-// @ts-expect-error TS(6142): Module '../Sound' was resolved to '/Users/Mak/Hype... Remove this comment to see the full error message
 import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
 
@@ -49,8 +45,7 @@ function DictionaryScreen(props: any) {
                         setFavLoading(false);
                     } else {
                         setFavLoading(false);
-                        // @ts-expect-error TS(2345): Argument of type 'string | null' is not assignable... Remove this comment to see the full error message
-                        const arr = JSON.parse(favValues);
+                        const arr = JSON.parse(favValues || '');
                         const newArr = DictionaryList.filter(item => arr.includes(item.id));
                         setFavDictionaries(newArr);
                     } 
@@ -68,15 +63,14 @@ function DictionaryScreen(props: any) {
         }, [])
     )
     
-    const [isModalVisible, setModalVisible] = useState(false),
+    const [isModalVisible, setModalVisible] = useState<boolean>(false),
           [reloadScreen, setReloadScreen] = useState(true),
           [isLoading, setLoading] = useState(false),
           [isFavLoading, setFavLoading] = useState(true),
-          [cardIndex, setCardIndex] = useState(null),
+          [cardIndex, setCardIndex] = useState<any>(),
           [favDictionaries, setFavDictionaries] = useState(DictionaryList),
-          // @ts-expect-error TS(2448): Block-scoped variable 'defaultDictionary' used bef... Remove this comment to see the full error message
-          [selectedDictionary, setSelectedDictionary] = useState(defaultDictionary),
           [defaultDictionary, setDefaultDictionary] = useState(""),
+          [selectedDictionary, setSelectedDictionary] = useState<any>(defaultDictionary), 
           [inputWord, setInputWord] = useState(""),
           [sharedMimeType, setSharedMimeType] = useState(null);
 
@@ -215,21 +209,16 @@ function DictionaryScreen(props: any) {
     }
 
     const folderToSave = (item: any) => {
-        // @ts-expect-error TS(2538): Type 'null' cannot be used as an index type.
         const stringifiedPhonetics = escape(JSON.stringify(props.cardData[cardIndex].phonetics));
-        // @ts-expect-error TS(2538): Type 'null' cannot be used as an index type.
         const stringifiedMeanings = escape(JSON.stringify(props.cardData[cardIndex].meanings));
         const folderToInsert = item.name
         
-        // @ts-expect-error TS(2538): Type 'null' cannot be used as an index type.
         if (props.cardData[cardIndex].mean == null) {
             UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(
                     `INSERT INTO "${folderToInsert}" (word, phonetics, origin, meanings)
-                    // @ts-expect-error TS(2538): Type 'null' cannot be used as an index type.
                     VALUES ("${props.cardData[cardIndex].word}", 
                             "${stringifiedPhonetics}", 
-                            // @ts-expect-error TS(2538): Type 'null' cannot be used as an index type.
                             "${props.cardData[cardIndex].origin}",
                             "${stringifiedMeanings}");`,[],
                     () => {
@@ -245,9 +234,7 @@ function DictionaryScreen(props: any) {
             UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(
                     `INSERT INTO "${folderToInsert}" (word, mean)
-                    // @ts-expect-error TS(2538): Type 'null' cannot be used as an index type.
                     VALUES ("${props.cardData[cardIndex].word}", 
-                            // @ts-expect-error TS(2538): Type 'null' cannot be used as an index type.
                             "${props.cardData[cardIndex].mean.replaceAll("/","\n\n")}");`,[],
                     () => {
                         console.log('inserted a word to a folder');
@@ -280,23 +267,18 @@ function DictionaryScreen(props: any) {
 
         if (isLoading) {
             return (
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <View style={{flex:40, marginTop: 10, alignItems:"center", justifyContent:'center'}}>
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <ActivityIndicator size='large' />
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <Text style={{color: 'grey',margin:10, fontSize:16}}>{strings.loading}</Text>
                 </View>
             )
         } else {
-            const [isThesaurusVisibleIndex, setThesaurusVisibleIndex] = useState([])
+            const [isThesaurusVisibleIndex, setThesaurusVisibleIndex] = useState<number[]>([])
             
             const onPressHandler = (item: any) => {
-                // @ts-expect-error TS(2345): Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
                 if (isThesaurusVisibleIndex.includes(item)) {
                     setThesaurusVisibleIndex(isThesaurusVisibleIndex.filter(value => value !== item))
                 } else {
-                    // @ts-expect-error TS(2322): Type 'any' is not assignable to type 'never'.
                     setThesaurusVisibleIndex([...isThesaurusVisibleIndex, item]);
                 }
             }
@@ -305,19 +287,14 @@ function DictionaryScreen(props: any) {
                 switch (selectedDictionary) {
                     case 'EJ':
                         return (
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Card containerStyle={{backgroundColor:'black', width: cardWindowWidth, borderRadius:5}}>
-                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                 <Text style={{color:'white',fontSize:30,fontWeight:"bold",margin:10}}>
                                     {props.cardData[index].word}
                                 </Text> 
-                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                 <Text style={{color:'white',fontSize:18}}>
                                     {props.cardData[index].mean.split("/").join("\n\n")}{/* here it's an alternative for replaceAll("/")}*/}
                                 </Text>
-                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                 <View style={{margin:10, alignItems:"center"}}>
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <Text style={{color:"white",fontSize:11}}>
                                         {strings.dataRetrievedFromEJDict}
                                     </Text>
@@ -335,30 +312,19 @@ function DictionaryScreen(props: any) {
                     case 'ko':
                         */
                     case 'en':
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         const mappedDifinition = (item: any) => <View>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Text style={{color: 'grey', fontSize:18}}>{item.partOfSpeech}</Text>
                             {item.definitions.map((item: any, index: any) =>
-                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                 <View style={{borderBottomWidth:10}}>
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <Text style={{color:'white', fontSize:18}}>{item.definition}</Text>
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <Text style={{color:'lightgrey', fontStyle:'italic', fontSize:18}}>{item.example}</Text>
                                     {(item.synonyms.length || item.antonyms.length > 0) &&
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         <TouchableOpacity onPress={() => onPressHandler(item)} style={{alignItems:'flex-start'}}>
-                                            // @ts-expect-error TS(2345): Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
                                             {!isThesaurusVisibleIndex.includes(item) &&
-                                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                             <Icon name='ellipsis1' type='antdesign' color='white' />
                                             }
-                                            // @ts-expect-error TS(2345): Argument of type 'any' is not assignable to parame... Remove this comment to see the full error message
                                             {isThesaurusVisibleIndex.includes(item) &&
-                                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                 <View style={{flexDirection:'row', flexWrap:'wrap'}}>  
-                                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                     {item.synonyms.map((item: any) => <Button buttonStyle={{backgroundColor:"green", borderRadius:40}}
                                                             onPress={() => {
                                                                 setInputWord(item)
@@ -366,7 +332,6 @@ function DictionaryScreen(props: any) {
                                                             title={item} 
                                                             titleStyle={{color:'white', fontSize: 18}}/>
                                                     )}
-                                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                     {item.antonyms.map((item: any) => <Button buttonStyle={{backgroundColor:"red", borderRadius:40}} 
                                                             onPress={() => {
                                                                 setInputWord(item)
@@ -383,32 +348,22 @@ function DictionaryScreen(props: any) {
                         </View>
 
                         return (
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Card containerStyle={{backgroundColor:'black', width: cardWindowWidth, borderRadius:5}}>
-                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                 <Text style={{color:'white',fontSize:30,fontWeight:"bold",marginTop:10, marginLeft:10}}>
                                     {props.cardData[index].word}
                                 </Text>
                                 {props.cardData[index].phonetics.map((item: any, index: any)=> 
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <View style={{flexDirection:'row'}}>
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={index}>| {item.text} |</Text>}
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         {item.audio != (undefined || "") && <AudioPlayer url={item.audio}/>}
                                     </View>)}
                                 {props.cardData[index].meanings.map(mappedDifinition)}
                                 {props.cardData[index].origin != undefined && 
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <View>
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         <Text style={{color:'white', fontWeight: 'bold', fontSize:18}}>{strings.origin}</Text>
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         <Text style={{color:'white', fontSize:18}}>{props.cardData[index].origin}</Text>
                                     </View>}
-                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                 <View style={{margin:10, alignItems:"center"}}>
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <Text style={{color:"white",fontSize:13}}>
                                         {strings.dataRetrievedFromWikitionary}
                                     </Text>
@@ -419,9 +374,7 @@ function DictionaryScreen(props: any) {
             }
             
             return (
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <View style={{flex:40, marginTop: 10, alignItems:'center'}}>
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <FlatList
                         style={{backgroundColor:'black'}}
                         pagingEnabled={true}
@@ -429,19 +382,18 @@ function DictionaryScreen(props: any) {
                         data={props.cardData}
                         keyExtractor={(item, index) => 'key'+index}
                         showsHorizontalScrollIndicator={false}
-                        // @ts-expect-error TS(2339): Property '_' does not exist on type 'ListRenderIte... Remove this comment to see the full error message
-                        renderItem={({_, index})=> {
+                        renderItem={(index)=> {
                             return (
-                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                                <ScrollView vertical>
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                                    <TouchableOpacity 
+                                <ScrollView>
+                                    <Pressable
                                         style={{padding: 5}}
-                                        // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
-                                        onPress={() => setModalVisible(true) & setCardIndex(index)}
+                                        onPress={() => {
+                                            setModalVisible(true)
+                                            setCardIndex(index)
+                                        }}
                                         >
                                         {CardContent(index)}                        
-                                    </TouchableOpacity>
+                                    </Pressable>
                                 </ScrollView>
                             )
                         }}
@@ -454,22 +406,17 @@ function DictionaryScreen(props: any) {
                         ListEmptyComponent={() => {
                             if (inputWord === '') {
                                 return (
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <View style={{alignItems: 'center', margin: width*0.1}}>
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         <Text style={{color:'grey', fontSize:20}}>{strings.searchResultShownHere}</Text>
                                     </View>
                                 )
                             } else {
                                 return (
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <View style={{justifyContent:'center'}}>
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         <Button 
                                             buttonStyle={{margin:width*0.05, width: width*0.9, height:height*0.65, borderColor:'white'}}
                                             title={strings.showResult}
                                             titleStyle={{color:'white', fontSize:20}}
-                                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                             icon={<Icon name='arrowright' type='antdesign' color='white' />}
                                             iconRight={true}
                                             type='outline'
@@ -480,7 +427,6 @@ function DictionaryScreen(props: any) {
                             }
                         }}
                     />
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     {props.cardData ? <Paginator data={props.cardData} scrollX={scrollX}/> : null}
                 </View>
             )
@@ -489,52 +435,38 @@ function DictionaryScreen(props: any) {
     
     if (isFavLoading) {
         return (
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <SafeAreaView style={{flex:40, backgroundColor:'black', alignItems:"center", justifyContent:'center', paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                <StatusBar style='light' />
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                <ActivityIndicator size='large' />
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                <StatusBar barStyle='light-content' />
+                <ActivityIndicator size='large'/>
                 <Text style={{color: 'grey',margin:10, fontSize:16}}>{strings.loading}</Text>
             </SafeAreaView>
         )
     } else {
         return (
-            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-            <SafeAreaView style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+            <SafeAreaView style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]} >
                 <Modal 
                     animationType='fade'
                     transparent={true}
                     visible={isModalVisible}
                     onDismiss={() => setModalVisible(false)}>
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <View style={{
                         flex: 1,
                         justifyContent: "center",
                         backgroundColor: "rgba(0, 0, 0, 0.7)"
                         }}>
-                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         <View style={{backgroundColor: 'black', marginVertical: height*0.2, flex: 1}}>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Text style={{color: 'white', fontSize:20, margin:10, justifyContent:'center'}}>{strings.selectAFolderToSave}</Text>
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <FlatList
                                 style={{backgroundColor:'black'}}
                                 data={props.folderList}
                                 renderItem={({item})=> {
                                     return (
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                                        <ScrollView vertical>
-                                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                                        <ScrollView>
                                             <View style={itemBoxStyles.container}>
-                                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                 <TouchableOpacity 
                                                     style={{padding: 20}}
                                                     onPress={() => folderToSave(item) }
                                                     >
-                                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                     <Text style={{color:'white', fontSize: 20}}>{item.name}</Text>
                                                 </TouchableOpacity>
                                             </View>
@@ -543,25 +475,18 @@ function DictionaryScreen(props: any) {
                                 }}
                                 keyExtractor={(item) => item.name}
                                 ListEmptyComponent={
-                                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                     <View style={{alignItems: 'center', margin: width*0.1}}>
-                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         <Text style={{color:'grey', fontSize:20}}>{strings.noFolderCreateFirst}</Text>
                                     </View>
                                 }
                             />
-                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Button title='Cancel' onPress={() => setModalVisible(false)}/>
                         </View>
                     </View>       
                 </Modal>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
-                <StatusBar style='light' />
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                <StatusBar barStyle='light-content' />
                 <View style={styles.searchContainer}>
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <Icon name="text-search" type='material-community' size={30} color="white" />
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <TextInput
                         style={styles.input}
                         onChangeText={setInputWord}
@@ -571,25 +496,21 @@ function DictionaryScreen(props: any) {
                         keyboardType="default"
                     />
                 </View>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <View style={styles.searchContainer}>
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <Icon name="book-open-page-variant" type='material-community' size={30} color="white" />
-                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <RNPickerSelect
-                        // @ts-expect-error TS(2362): The left-hand side of an arithmetic operation must... Remove this comment to see the full error message
-                        onValueChange={(value) => setSelectedDictionary(value) & props.updateCardData(null)}
+                        onValueChange={(value) => {
+                            setSelectedDictionary(value)
+                            props.updateCardData(null)
+                        }}
                         placeholder={{label: strings.selectADictionary, color: 'grey'}}
-                        // @ts-expect-error TS(2769): No overload matches this call.
-                        style={{inputAndroid: [styles.input, {color:'black'}], inputIOS: styles.input}}
+                        style={{inputAndroid: {...styles.input, color:'black'}, inputIOS: styles.input}}
                         items={favDictionaries}
                         value={selectedDictionary}
                         useNativeAndroidPickerStyle={false}
                     />       
                 </View>
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <Cards />
-                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <FAB icon={{name: 'settings', type:'ionicons', color:'white'}} 
                     upperCase={true} 
                     color='#007AFF' 

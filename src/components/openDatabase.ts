@@ -1,4 +1,3 @@
-// @ts-expect-error TS(7016): Could not find a declaration file for module 'reac... Remove this comment to see the full error message
 import SQLite from 'react-native-sqlite-storage';
 
 const successEjDictOP = () => {console.log("successfully opened ejdictDB")};
