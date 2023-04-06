@@ -7,11 +7,12 @@ import { updateFolderList, updateSavedWordList } from '../../../actions';
 import { connect } from 'react-redux';
 import { UserDatabaseDB } from '../../openDatabase';
 import RNPickerSelect from 'react-native-picker-select';
+// @ts-expect-error TS(6142): Module '../Sound' was resolved to '/Users/Mak/Hype... Remove this comment to see the full error message
 import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
 
 
-const EditCard = (props) => {
+const EditCard = (props: any) => {
     const { folderList, savedWordList, navigation, route } = props
     const { parsedPhonetics, parsedMeanings, cardIndex, browsingFolder } = route.params
 
@@ -25,15 +26,16 @@ const EditCard = (props) => {
     const SaveEditedCard = () => {
         const stringifiedMeanings = escape(JSON.stringify(isEditCardMeaningsValue));
         if (isEditCardMeanValue) {
-            UserDatabaseDB.transaction(tx => {
+            UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(
                     `UPDATE "${browsingFolder}" 
                     SET word = "${isEditCardWordValue}",
                         mean = "${isEditCardMeanValue}",
                         level = ${isEditCardLevel}
                     WHERE item_id = ${savedWordList[cardIndex].item_id};`,[],
-                (_, results) => {
+                (_: any, results: any) => {
                     console.log('edited word');
+                    // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
                     Alert.alert(null, strings.editedSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}]);
                     setReloadScreen(true);
                 },
@@ -41,7 +43,7 @@ const EditCard = (props) => {
                 )
             })
         } else {
-            UserDatabaseDB.transaction(tx => {
+            UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(
                     `UPDATE "${browsingFolder}" 
                     SET word = "${isEditCardWordValue}",
@@ -49,8 +51,9 @@ const EditCard = (props) => {
                         origin = "${isEditCardOriginValue}",
                         level = ${isEditCardLevel}
                     WHERE item_id = ${savedWordList[cardIndex].item_id};`,[],
-                (_, results) => {
+                (_: any, results: any) => {
                     console.log('edited word');
+                    // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
                     Alert.alert(null, strings.editedSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}]);
                     setReloadScreen(true);
                 },
@@ -61,9 +64,9 @@ const EditCard = (props) => {
     }
 
     if (reloadScreen) {
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(`SELECT item_id, word, mean, meanings, phonetics, origin, level FROM '${browsingFolder}';`, [],
-            (_, results) => {
+            (_: any, results: any) => {
                 const savedWord = results.rows.raw()
                 props.updateSavedWordList(savedWord);
                 setReloadScreen(false);
@@ -74,18 +77,27 @@ const EditCard = (props) => {
     }
 
     return (
+        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
+            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <StatusBar style='light'/>
+            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <View style={{backgroundColor:'black', flex:1}}>
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <Header 
                     backgroundColor='black'
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={()=> navigation.navigate('BrowseFolder')}/>}
                     centerComponent={{text: strings.edit, style:{color: 'white', fontSize:20}}}
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     rightComponent={<Icon name='save-alt' type='material' color='white' onPress={()=> SaveEditedCard()}/>}
                 />
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <ScrollView vertical>
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <Card containerStyle={{backgroundColor:'black', width: width*0.9, borderRadius:5}}>
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <TextInput 
                         style={{color:'white',fontSize:30,fontWeight:"bold",marginVertical:10, borderColor:'black', borderWidth:1, borderRadius:5}} 
                         defaultValue={isEditCardWordValue}
@@ -95,6 +107,7 @@ const EditCard = (props) => {
                         placeholderTextColor="grey"
                         />
                     {isEditCardMeanValue ? 
+                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         <TextInput 
                             style={{color:'white',fontSize:18, backgroundColor:'black', borderRadius:5, borderColor:'black', borderWidth:1}} 
                             multiline={true} 
@@ -105,14 +118,18 @@ const EditCard = (props) => {
                             placeholderTextColor="grey"
                         /> : null}
                     {isEditCardMeaningsValue ? 
+                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         <View>
-                            {parsedPhonetics.map((item)=> 
-                                <View style={{flexDirection:'row'}}>
-                                    {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={item}>| {item.text} |</Text>}
-                                    {item.audio != undefined && <AudioPlayer url={item.audio}/>}
-                                </View>
+                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                            {parsedPhonetics.map((item: any) => <View style={{flexDirection:'row'}}>
+                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                                {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={item}>| {item.text} |</Text>}
+                                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
+                                {item.audio != undefined && <AudioPlayer url={item.audio}/>}
+                            </View>
                                 )
                             }
+                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <FlatList
                                 style={{backgroundColor:'black'}}
                                 data={isEditCardMeaningsValue}
@@ -121,7 +138,9 @@ const EditCard = (props) => {
                                 renderItem={({item, index})=> {
                                     const childData = isEditCardMeaningsValue[index].definitions;
                                     return (
+                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                         <View>
+                                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                             <TextInput 
                                                 style={{color: 'grey', fontSize:18, backgroundColor:'black', marginTop: 10}}
                                                 defaultValue={isEditCardMeaningsValue[index].partOfSpeech}
@@ -133,6 +152,7 @@ const EditCard = (props) => {
                                                 placeholderTextColor='grey'
                                                 scrollEnabled={false}
                                             />
+                                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                             <FlatList
                                                 style={{backgroundColor: 'black'}}
                                                 data={childData}
@@ -140,7 +160,9 @@ const EditCard = (props) => {
                                                 keyExtractor={(item, index) => 'key(defintion)' + index}
                                                 renderItem={({item, index}) => {
                                                     return (
+                                                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                         <View>
+                                                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                             <TextInput 
                                                                 style={{color:'white',fontSize:18, backgroundColor:'black', borderRadius:5, borderColor:'black', borderWidth:1}} 
                                                                 multiline={true} 
@@ -153,6 +175,7 @@ const EditCard = (props) => {
                                                                 placeholder={strings.typeDefinition}
                                                                 placeholderTextColor="grey"
                                                             />
+                                                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                                                             <TextInput 
                                                                 style={{color:'grey',fontSize:18, fontStyle: 'italic', backgroundColor:'black', borderRadius:5, borderColor:'black', borderWidth:1}} 
                                                                 multiline={true}
@@ -173,7 +196,9 @@ const EditCard = (props) => {
                                     )
                                 }}
                             /> 
+                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Text style={{color:'white', fontWeight: 'bold', fontSize:18, marginTop:10}}>{strings.origin}</Text>
+                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <TextInput 
                                 style={{color:'white',fontSize:18, backgroundColor:'black'}} 
                                 multiline={true}
@@ -185,8 +210,11 @@ const EditCard = (props) => {
                             />
                         </View>
                     : null}
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <Text style={{color: 'white', fontSize: 18, marginTop:10, fontWeight: 'bold'}}>{strings.setLevel}</Text>
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <View style={{justifyContent: 'flex-start'}}>
+                        // @ts-expect-error TS(2769): No overload matches this call.
                         <RNPickerSelect
                             onValueChange={(value) => setEditCardLevel(value)}
                             placeholder={{label: strings.selectLevel, color: 'grey'}}
@@ -211,10 +239,10 @@ const EditCard = (props) => {
                 </ScrollView>
             </View>
         </View>
-    )
+    );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,

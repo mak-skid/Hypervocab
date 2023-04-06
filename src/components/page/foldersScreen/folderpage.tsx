@@ -4,6 +4,7 @@ import { Header, Icon } from 'react-native-elements';
 import { styles, width, height } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
 import { connect } from 'react-redux';
+// @ts-expect-error TS(6142): Module '../../ItemBox' was resolved to '/Users/Mak... Remove this comment to see the full error message
 import { ItemBox } from '../../ItemBox';
 import prompt from 'react-native-prompt-android';
 import { UserDatabaseDB } from '../../openDatabase';
@@ -11,15 +12,15 @@ import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 
-function FolderScreen(props) {
+function FolderScreen(props: any) {
     const {folderList, savedWordList, navigation} = props
 
     const [reloadScreen, setReloadScreen] = useState(true);
     if (reloadScreen) {
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(
             `SELECT name FROM sqlite_master WHERE (type = "table") AND (name != "sqlite_sequence" AND name != "android_metadata");`, [], 
-                (_, results) => {
+                (_: any, results: any) => {
                     const folderList = results.rows.raw();
                     console.log('tables: ', results.rows.length);
                     props.updateFolderList(folderList);
@@ -41,9 +42,9 @@ function FolderScreen(props) {
         )
     }
 
-    const createNewFolder = (setName) => {
+    const createNewFolder = (setName: any) => {
         var len = props.folderList.length
-        const handleDB = UserDatabaseDB.transaction(tx => {
+        const handleDB = UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(
                 `CREATE TABLE IF NOT EXISTS "${setName}" (
                     item_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,7 +56,7 @@ function FolderScreen(props) {
                     level INTEGER DEFAULT 0,
                     due_date INTEGER
                     );`, [],
-                (_, results) => {
+                (_: any, results: any) => {
                     console.log("Query: Folder Created");
                     setReloadScreen(true);
                 }, () => { 
@@ -83,18 +84,18 @@ function FolderScreen(props) {
         }
     }
 
-    const deleteDialog = (index) => {
+    const deleteDialog = (index: any) => {
         Alert.alert(strings.confirm, strings.areYouSureToDeleteGone, [{
             text: 'Yes', onPress: () => {deleteFolder(index)}
             }, {text:'No'}
         ])
     }
 
-    const deleteFolder = (item) => {
+    const deleteFolder = (item: any) => {
         const deleteValue = item.name
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(`DROP TABLE "${deleteValue}"`,[],
-            (_, results) => {
+            (_: any, results: any) => {
                 console.log('deleted a table: ' + deleteValue);
                 setReloadScreen(true);
             },
@@ -103,7 +104,7 @@ function FolderScreen(props) {
         })  
     };
 
-    const editDialog = (item) => {
+    const editDialog = (item: any) => {
         const prevValue = item.name
         prompt(strings.editFolderName, strings.insertFolderName,[{
             text: strings.cancel},{
@@ -114,7 +115,7 @@ function FolderScreen(props) {
         )
     }
 
-    const editFolder = (prevValue, editedName) => {
+    const editFolder = (prevValue: any, editedName: any) => {
         if (editedName === '') {
             Alert.alert(strings.error, strings.setValidName)
         } else if (editedName === prevValue) {
@@ -122,21 +123,27 @@ function FolderScreen(props) {
         } else {
             console.log('editFrom: ', prevValue);
             console.log('editTo: ', editedName)
-            UserDatabaseDB.transaction(tx => {
+            UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(`ALTER TABLE "${prevValue}" RENAME TO "${editedName}";`, [],
-                (_, results) => {
+                (_: any, results: any) => {
                     console.log('edited a table name: ' + prevValue);
                     setReloadScreen(true);
                 },
+                // @ts-expect-error TS(2551): Property 'FailedEditingFolderName' does not exist ... Remove this comment to see the full error message
                 () => Alert.alert(strings.error, strings.FailedEditingFolderName)
                 )
             })
         }   
     }
 
-    const foldersRenderItem = ({item, index})=> {
+    const foldersRenderItem = ({
+        item,
+        index
+    }: any)=> {
         return(
+            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <ScrollView vertical>
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <ItemBox 
                     data={item.name} 
                     handleDelete={() => deleteDialog(item)}
@@ -148,18 +155,23 @@ function FolderScreen(props) {
     }
 
     return (
+        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
+            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <StatusBar style='light'/>
+            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <SafeAreaView style={{
                 backgroundColor: 'black',
                 alignItems: 'stretch',
                 justifyContent: 'space-between',
                 flex: 1,
                 }}>
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <Header 
                     backgroundColor='black'
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
                     rightComponent={
+                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         <Icon 
                             name='addfolder'
                             type='antdesign'
@@ -169,24 +181,28 @@ function FolderScreen(props) {
                     }
                     centerComponent={{text: strings.folders, style:{color: 'white', fontSize:20}}}
                     />
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <FlatList
                     style={{backgroundColor:'black'}}
                     data={props.folderList}
                     renderItem={foldersRenderItem}
                     keyExtractor={(item) => item.name}
                     ListEmptyComponent={
+                        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                         <View style={{alignItems: 'center', marginTop: height*0.2}}>
+                            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                             <Text style={{color:'grey', fontSize:20}}>{strings.noFolder}</Text>
                         </View>
                     }
                 />   
                 </SafeAreaView>
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
         </View>         
     );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,

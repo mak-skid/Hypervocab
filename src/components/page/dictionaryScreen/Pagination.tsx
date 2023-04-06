@@ -1,11 +1,16 @@
 import React from 'react';
 import { View, StyleSheet, Animated, useWindowDimensions } from 'react-native';
 
-export default Paginator = ({data, scrollX}) => {
+// @ts-expect-error TS(2304): Cannot find name 'Paginator'.
+export default Paginator = ({
+    data,
+    scrollX
+}: any) => {
     const { width } = useWindowDimensions();
     return (
+        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <View style={{flexDirection:'row', alignContent:"center", height:20}}>
-            {data && data.map((_, i) => {
+            {data && data.map((_: any, i: any) => {
                 const inputRange = [(i - 1)*width, i*width, (i + 1)*width];
 
                 const dotWidth = scrollX.interpolate({
@@ -15,11 +20,12 @@ export default Paginator = ({data, scrollX}) => {
                 })
 
                 return (
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <Animated.View style={[styles.dot, {width: dotWidth}]} key={i.toString()} />
                 )
             })}
         </View>
-    )
+    );
 }
 
 const styles = StyleSheet.create({

@@ -10,7 +10,7 @@ import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 
-const CustomCard = (props) => {
+const CustomCard = (props: any) => {
     const {folderList, savedWordList, navigation, route} = props
 
     const [reloadScreen, setReloadScreen] = useState(true),
@@ -19,13 +19,14 @@ const CustomCard = (props) => {
           
     const SaveCustomCard = () => {
         const browsingFolder = route.params.item
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(
                 `INSERT INTO "${browsingFolder}" (word, mean, level)
                  VALUES("${isEditCardWordValue}", "${isEditCardMeanValue}", 0);`,[],
-            (_, results) => {
+            (_: any, results: any) => {
                 console.log('saved word');
                 setReloadScreen(true);
+                // @ts-expect-error TS(2345): Argument of type 'null' is not assignable to param... Remove this comment to see the full error message
                 Alert.alert(null, strings.createdSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}])
             },
             () => alert(strings.errorSaving)
@@ -35,9 +36,9 @@ const CustomCard = (props) => {
 
     if (reloadScreen) {
         const browsingFolder = route.params.item
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(`SELECT item_id, word, mean, level, meanings, phonetics FROM "${browsingFolder}";`, [],
-            (_, results) => {
+            (_: any, results: any) => {
                 const savedWord = results.rows.raw()
                 props.updateSavedWordList(savedWord);
                 setReloadScreen(false);
@@ -48,18 +49,27 @@ const CustomCard = (props) => {
     }
 
     return (
+        // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
+            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <StatusBar style='light'/>
+            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <View style={{backgroundColor:'black', flex:1}}>
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <Header 
                     backgroundColor='black'
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={()=> navigation.navigate('BrowseFolder')}/>}
                     centerComponent={{text: 'Create a card', style:{color: 'white', fontSize:20}}}
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     rightComponent={<Icon name='save-alt' type='material' color='white' onPress={()=> SaveCustomCard()}/>}
                 />
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <ScrollView vertical>
+                // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                 <Card containerStyle={{backgroundColor:'black', width: width*0.9, borderRadius:5}}>
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <TextInput 
                         style={{color:'white',fontSize:30,fontWeight:"bold",marginVertical:10}} 
                         defaultValue={isEditCardWordValue}
@@ -67,24 +77,27 @@ const CustomCard = (props) => {
                         placeholderTextColor="grey" 
                         onChangeText={setEditCardWordValue}
                         />
+                    // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
                     <TextInput 
                         style={{color:'white',fontSize:18}} 
                         multiline={true} 
                         defaultValue={isEditCardMeanValue} 
                         placeholder={strings.typeDefinitionAnswer}
                         placeholderTextColor="grey"
+                        // @ts-expect-error TS(17001): JSX elements cannot have multiple attributes with ... Remove this comment to see the full error message
                         multiline={true}
                         onChangeText={setEditCardMeanValue}
                         /> 
                 </Card>
                 </ScrollView>
             </View>
+            // @ts-expect-error TS(17004): Cannot use JSX unless the '--jsx' flag is provided... Remove this comment to see the full error message
             <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
         </View>
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,
