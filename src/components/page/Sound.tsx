@@ -3,7 +3,7 @@ import { TouchableOpacity, Alert } from 'react-native';
 import { Icon } from 'react-native-elements/dist/icons/Icon';
 import { strings } from './strings';
 
-export const AudioPlayer = (props) => {
+export const AudioPlayer = (props: any) => {
     const { url } = props
     console.log("url: ", url);
 
@@ -14,7 +14,7 @@ export const AudioPlayer = (props) => {
     var audio = new Sound(
         `${url}`,
         null,
-        error => {
+        (error: any) => {
             if (error) {
                 console.log('Failed to load the sound.', url);
             } else {
@@ -23,7 +23,7 @@ export const AudioPlayer = (props) => {
         }
     )
     
-    const [playing, setPlaying] = useState();
+    const [playing, setPlaying] = useState<boolean>();
     
     useEffect(() => {
         audio.setVolume(1);
@@ -38,7 +38,7 @@ export const AudioPlayer = (props) => {
             setPlaying(false);
         } else {
             setPlaying(true);
-            audio.play(success => {
+            audio.play((success: any) => {
             if (success) {
                 setPlaying(false);
                 console.log('successfully finished playing');
@@ -60,6 +60,7 @@ export const AudioPlayer = (props) => {
                 }} 
             onPress={playPause}
         >
+
             <Icon
                 type='ionicon'
                 name={playing ? 'pause' : 'play'}

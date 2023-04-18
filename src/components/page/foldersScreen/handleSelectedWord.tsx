@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, SafeAreaView, FlatList, Modal, Text, ScrollView, Alert, TouchableOpacity, StatusBar} from 'react-native';
+import { View, SafeAreaView, FlatList, Modal, Text, ScrollView, Alert, TouchableOpacity, StatusBar, Platform} from 'react-native';
 import { Header, Icon, Button } from 'react-native-elements';
 import { styles, width, height } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
@@ -10,10 +10,10 @@ import { useActionSheet } from '@expo/react-native-action-sheet';
 import { strings } from '../strings';
 
 
-const HandleSelectedWord = (props) => {
+const HandleSelectedWord = (props: any) => {
     const {folderList, savedWordList, navigation, route} = props
 
-    const [selectedIndex, setSelectedIndex] = useState([]),
+    const [selectedIndex, setSelectedIndex] = useState<number[]>([]),
           [isModalVisible, setModalVisible] = useState(false),
           [isTransferAllModalVisible, setTransferAllModalVisible] = useState(false),
           [reloadScreen, setReloadScreen] = useState(true);
@@ -21,9 +21,9 @@ const HandleSelectedWord = (props) => {
     const browsingFolder = route.params.item;
 
     if (reloadScreen) {
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(`SELECT item_id, word, mean, meanings, phonetics, level FROM '${browsingFolder}';`, [],
-            (_, results) => {
+            (_: any, results: any) => {
                 console.log('Got a saved list in the folder to edit: ' + browsingFolder);
                 const savedWord = results.rows.raw()
                 props.updateSavedWordList(savedWord)
@@ -34,7 +34,7 @@ const HandleSelectedWord = (props) => {
         })
     }
     
-    const onPressHandler = (index) => {
+    const onPressHandler = (index: any) => {
         if (selectedIndex.includes(index)) {
             setSelectedIndex(selectedIndex.filter(value => value !== index))
         } else {
@@ -58,16 +58,16 @@ const HandleSelectedWord = (props) => {
             switch (buttonIndex) {
                 case 0:
                     if (!selectedIndex.length) {
-                        Alert.alert(null, strings.noCardsSelected)
+                        Alert.alert('', strings.noCardsSelected)
                     } else {
                         Alert.alert(strings.confirm, strings.areYouSureToDelete, [{
                             text: 'Yes', 
                             onPress: 
                                 () => {
                                     selectedIndex.map((item) => {
-                                        UserDatabaseDB.transaction(tx => {
+                                        UserDatabaseDB.transaction((tx: any) => {
                                             tx.executeSql(`DELETE FROM '${browsingFolder}' WHERE item_id = ${savedWordList[item].item_id} `,[],
-                                            (_, results) => {
+                                            (_: any, results: any) => {
                                                 console.log('deleted words');
                                                 const savedWord = results.rows.raw();
                                                 props.updateSavedWordList(savedWord);
@@ -89,9 +89,9 @@ const HandleSelectedWord = (props) => {
                         text: 'Yes', 
                         onPress: 
                             () => {
-                                UserDatabaseDB.transaction(tx => {
+                                UserDatabaseDB.transaction((tx: any) => {
                                     tx.executeSql(`DELETE FROM '${browsingFolder}'`,[],
-                                    (_, results) => {
+                                    (_: any, results: any) => {
                                         console.log('deleted words');
                                         const savedWord = results.rows.raw();
                                         props.updateSavedWordList(savedWord);
@@ -108,7 +108,7 @@ const HandleSelectedWord = (props) => {
                     break;
                 case 2:
                     if (!selectedIndex.length) {
-                        Alert.alert(null, strings.noCardsSelected)
+                        Alert.alert('', strings.noCardsSelected)
                     } else {
                         setModalVisible(true);
                     }
@@ -121,9 +121,9 @@ const HandleSelectedWord = (props) => {
                         text: 'Yes', 
                         onPress: 
                             () => {
-                                UserDatabaseDB.transaction(tx => {
+                                UserDatabaseDB.transaction((tx: any) => {
                                     tx.executeSql(`UPDATE "${browsingFolder}" SET level = 0, due_date = null;`,[],
-                                    (_, results) => {
+                                    (_: any, results: any) => {
                                         console.log('reset level');
                                         const savedWord = results.rows.raw();
                                         props.updateSavedWordList(savedWord);
@@ -144,16 +144,16 @@ const HandleSelectedWord = (props) => {
         );
     }
     
-    const TransferWords = (item) => {
+    const TransferWords = (item: any) => {
         const folderToTransfer = item.name;
         Alert.alert(strings.confirm, strings.areYouSureToTransfer + folderToTransfer + strings.areYouSureToTransferJapanese, [{
             text: 'Yes', 
             onPress: 
                 () => {
                     selectedIndex.map((item) => {
-                        UserDatabaseDB.transaction(tx => {
+                        UserDatabaseDB.transaction((tx: any) => {
                             tx.executeSql(`INSERT INTO "${folderToTransfer}" SELECT * FROM "${browsingFolder}" WHERE item_id = ${savedWordList[item].item_id} `,[],
-                            (_, results) => {
+                            (_: any, results: any) => {
                                 console.log('transfered words');
                                 const savedWord = results.rows.raw();
                                 props.updateSavedWordList(savedWord);
@@ -165,9 +165,9 @@ const HandleSelectedWord = (props) => {
                                     text: 'Yes', 
                                     onPress: 
                                         () => {
-                                            UserDatabaseDB.transaction(tx => {
+                                            UserDatabaseDB.transaction((tx: any) => {
                                                 tx.executeSql(`INSERT OR REPLACE INTO "${folderToTransfer}" SELECT * FROM "${browsingFolder}"`,[],
-                                                (_, results) => {
+                                                (_: any, results: any) => {
                                                     console.log('transfered words');
                                                     const savedWord = results.rows.raw();
                                                     props.updateSavedWordList(savedWord);
@@ -193,15 +193,15 @@ const HandleSelectedWord = (props) => {
         ])  
     }
 
-    const TransferAll = (item) => {
+    const TransferAll = (item: any) => {
         const folderToTransfer = item.name;
         Alert.alert(strings.error, strings.areYouSureToTransferAll + folderToTransfer + strings.areYouSureToTransferAllJapanese, [{
             text: 'Yes', 
             onPress: 
                 () => {
-                    UserDatabaseDB.transaction(tx => {
+                    UserDatabaseDB.transaction((tx: any) => {
                         tx.executeSql(`INSERT INTO '${folderToTransfer}' SELECT * FROM '${browsingFolder}'`,[],
-                        (_, results) => {
+                        (_: any, results: any) => {
                             console.log('transfered words');
                             const savedWord = results.rows.raw();
                             props.updateSavedWordList(savedWord);
@@ -213,9 +213,9 @@ const HandleSelectedWord = (props) => {
                                 text: 'Yes', 
                                 onPress: 
                                     () => {
-                                        UserDatabaseDB.transaction(tx => {
+                                        UserDatabaseDB.transaction((tx: any) => {
                                             tx.executeSql(`INSERT OR REPLACE INTO '${folderToTransfer}' SELECT * FROM '${browsingFolder}'`,[],
-                                            (_, results) => {
+                                            (_: any, results: any) => {
                                                 console.log('transfered words');
                                                 const savedWord = results.rows.raw();
                                                 props.updateSavedWordList(savedWord);
@@ -240,9 +240,9 @@ const HandleSelectedWord = (props) => {
         ])   
     }
     
-    return (
+    return (     
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            <StatusBar style='light'/>
+            <StatusBar barStyle='light-content'/>
                 <SafeAreaView style={{
                     backgroundColor: 'black',
                     alignItems: 'stretch',
@@ -251,10 +251,10 @@ const HandleSelectedWord = (props) => {
                     }}>
                     <Header 
                         backgroundColor='black'
-                        containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
-                        leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={()=> navigation.navigate('BrowseFolder')}/>}
+                        containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }} 
+                        leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('BrowseFolder')} tvParallaxProperties={undefined}/>}
                         centerComponent={{text: strings.select, style:{color: 'white', fontSize:20}}}
-                        rightComponent={<Icon name='ellipsis-horizontal' type='ionicon' color='white' onPress={() => handleRightComponent()}/>}
+                        rightComponent={<Icon name='ellipsis-horizontal' type='ionicon' color='white' onPress={() => handleRightComponent()} tvParallaxProperties={undefined}/>}
                     />
                     <Modal 
                         animationType='fade'
@@ -266,19 +266,16 @@ const HandleSelectedWord = (props) => {
                             justifyContent: "center",
                             backgroundColor: "rgba(0, 0, 0, 0.7)"
                             }}>
-                            <View style={{backgroundColor: 'black', marginVertical: height*0.2, flex: 1}}>
-                                <Text style={{color: 'white', fontSize:20, margin:10, justifyContent:'center'}}>{strings.selectAFolderToTransfer}</Text>
+                            <View style={{backgroundColor: 'black', marginVertical: height*0.2, flex: 1}}> 
+                                <Text style={{color: 'white', fontSize:20, margin:10, justifyContent:'center'}}>{strings.selectAFolderToTransfer}</Text>                          
                                 <FlatList
                                     style={{backgroundColor:'black'}}
-                                    data={props.folderList.filter(item=>(item.name !==browsingFolder))}
-                                    renderItem={({item, index})=> {
+                                    data={props.folderList.filter((item: any) => item.name !==browsingFolder)}
+                                    renderItem={({item})=> {
                                         return (
-                                            <ScrollView vertical>
+                                            <ScrollView>
                                                 <View style={itemBoxStyles.container}>
-                                                    <TouchableOpacity 
-                                                        style={{padding: 20}}
-                                                        onPress={() => TransferWords(item)}
-                                                        >
+                                                    <TouchableOpacity style={{padding: 20}} onPress={() => TransferWords(item)}>
                                                         <Text style={{color:'white', fontSize: 20}}>{item.name}</Text>
                                                     </TouchableOpacity>
                                                 </View>
@@ -301,19 +298,15 @@ const HandleSelectedWord = (props) => {
                         transparent={true}
                         visible={isTransferAllModalVisible}
                         onDismiss={() => setTransferAllModalVisible(false)}>
-                        <View style={{
-                            flex: 1,
-                            justifyContent: "center",
-                            backgroundColor: "rgba(0, 0, 0, 0.7)"
-                            }}>
+                        <View style={{flex: 1, justifyContent: "center", backgroundColor: "rgba(0, 0, 0, 0.7)"}}>
                             <View style={{backgroundColor: 'black', marginVertical: height*0.2, flex: 1}}>
                                 <Text style={{color: 'white', fontSize:20, margin:10, justifyContent:'center'}}>Select a folder to transfer</Text>
                                 <FlatList
                                     style={{backgroundColor:'black'}}
-                                    data={props.folderList.filter(item=>(item.name !==browsingFolder))}
+                                    data={props.folderList.filter((item: any) => item.name !==browsingFolder)}
                                     renderItem={({item, index})=> {
                                         return (
-                                            <ScrollView vertical>
+                                            <ScrollView>
                                                 <View style={itemBoxStyles.container}>
                                                     <TouchableOpacity 
                                                         style={{padding: 20}}
@@ -339,11 +332,11 @@ const HandleSelectedWord = (props) => {
                     <FlatList
                         style={{backgroundColor:'black'}}
                         data={savedWordList}
-                        renderItem={({item, index})=> {
+                        renderItem={({index})=> {
                             const backgroundColor = selectedIndex.includes(index) ? 'rgba(40, 40, 40, 1)' : 'black';
                             const parsedMeanings = JSON.parse(unescape(savedWordList[index].meanings));
                             return (
-                                <ScrollView vertical>
+                                <ScrollView>
                                     <TouchableOpacity onPress={() => onPressHandler(index)}>
                                         <View style={{borderColor:'grey', borderBottomWidth:1, backgroundColor:backgroundColor}}>
                                             <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
@@ -366,10 +359,10 @@ const HandleSelectedWord = (props) => {
                     />
                 </SafeAreaView>
         </View>
-    )
+    );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,

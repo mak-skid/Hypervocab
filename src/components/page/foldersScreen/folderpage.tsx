@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, SafeAreaView, FlatList, StyleSheet, Text, ScrollView, Alert, StatusBar} from 'react-native';
+import { View, SafeAreaView, FlatList, StyleSheet, Text, ScrollView, Alert, StatusBar, Platform} from 'react-native';
 import { Header, Icon } from 'react-native-elements';
 import { styles, width, height } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
@@ -11,15 +11,15 @@ import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 
-function FolderScreen(props) {
+function FolderScreen(props: any) {
     const {folderList, savedWordList, navigation} = props
 
     const [reloadScreen, setReloadScreen] = useState(true);
     if (reloadScreen) {
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(
             `SELECT name FROM sqlite_master WHERE (type = "table") AND (name != "sqlite_sequence" AND name != "android_metadata");`, [], 
-                (_, results) => {
+                (_: any, results: any) => {
                     const folderList = results.rows.raw();
                     console.log('tables: ', results.rows.length);
                     props.updateFolderList(folderList);
@@ -41,9 +41,9 @@ function FolderScreen(props) {
         )
     }
 
-    const createNewFolder = (setName) => {
+    const createNewFolder = (setName: any) => {
         var len = props.folderList.length
-        const handleDB = UserDatabaseDB.transaction(tx => {
+        const handleDB = UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(
                 `CREATE TABLE IF NOT EXISTS "${setName}" (
                     item_id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -55,7 +55,7 @@ function FolderScreen(props) {
                     level INTEGER DEFAULT 0,
                     due_date INTEGER
                     );`, [],
-                (_, results) => {
+                (_: any, results: any) => {
                     console.log("Query: Folder Created");
                     setReloadScreen(true);
                 }, () => { 
@@ -83,18 +83,18 @@ function FolderScreen(props) {
         }
     }
 
-    const deleteDialog = (index) => {
+    const deleteDialog = (index: any) => {
         Alert.alert(strings.confirm, strings.areYouSureToDeleteGone, [{
             text: 'Yes', onPress: () => {deleteFolder(index)}
             }, {text:'No'}
         ])
     }
 
-    const deleteFolder = (item) => {
+    const deleteFolder = (item: any) => {
         const deleteValue = item.name
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(`DROP TABLE "${deleteValue}"`,[],
-            (_, results) => {
+            (_: any, results: any) => {
                 console.log('deleted a table: ' + deleteValue);
                 setReloadScreen(true);
             },
@@ -103,7 +103,7 @@ function FolderScreen(props) {
         })  
     };
 
-    const editDialog = (item) => {
+    const editDialog = (item: any) => {
         const prevValue = item.name
         prompt(strings.editFolderName, strings.insertFolderName,[{
             text: strings.cancel},{
@@ -114,7 +114,7 @@ function FolderScreen(props) {
         )
     }
 
-    const editFolder = (prevValue, editedName) => {
+    const editFolder = (prevValue: any, editedName: any) => {
         if (editedName === '') {
             Alert.alert(strings.error, strings.setValidName)
         } else if (editedName === prevValue) {
@@ -122,21 +122,21 @@ function FolderScreen(props) {
         } else {
             console.log('editFrom: ', prevValue);
             console.log('editTo: ', editedName)
-            UserDatabaseDB.transaction(tx => {
+            UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(`ALTER TABLE "${prevValue}" RENAME TO "${editedName}";`, [],
-                (_, results) => {
+                (_: any, results: any) => {
                     console.log('edited a table name: ' + prevValue);
                     setReloadScreen(true);
                 },
-                () => Alert.alert(strings.error, strings.FailedEditingFolderName)
+                () => Alert.alert(strings.error, strings.failedEditingFolderName)
                 )
             })
         }   
     }
 
-    const foldersRenderItem = ({item, index})=> {
+    const foldersRenderItem = ({item,index}: any)=> {
         return(
-            <ScrollView vertical>
+            <ScrollView> 
                 <ItemBox 
                     data={item.name} 
                     handleDelete={() => deleteDialog(item)}
@@ -149,7 +149,7 @@ function FolderScreen(props) {
 
     return (
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            <StatusBar style='light'/>
+            <StatusBar barStyle='light-content'/>
             <SafeAreaView style={{
                 backgroundColor: 'black',
                 alignItems: 'stretch',
@@ -159,13 +159,8 @@ function FolderScreen(props) {
                 <Header 
                     backgroundColor='black'
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
-                    rightComponent={
-                        <Icon 
-                            name='addfolder'
-                            type='antdesign'
-                            color='white'
-                            onPress={() => createDialog()}
-                        />
+                    rightComponent={     
+                        <Icon name='addfolder' type='antdesign' color='white' onPress={() => createDialog()} tvParallaxProperties={undefined}/>
                     }
                     centerComponent={{text: strings.folders, style:{color: 'white', fontSize:20}}}
                     />
@@ -174,7 +169,7 @@ function FolderScreen(props) {
                     data={props.folderList}
                     renderItem={foldersRenderItem}
                     keyExtractor={(item) => item.name}
-                    ListEmptyComponent={
+                    ListEmptyComponent={  
                         <View style={{alignItems: 'center', marginTop: height*0.2}}>
                             <Text style={{color:'grey', fontSize:20}}>{strings.noFolder}</Text>
                         </View>
@@ -186,7 +181,7 @@ function FolderScreen(props) {
     );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,

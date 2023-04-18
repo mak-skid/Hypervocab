@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { View, SafeAreaView, TextInput, TouchableOpacity, ScrollView, Dimensions, Modal, FlatList, Alert, Animated, StatusBar} from 'react-native';
+import { View, SafeAreaView, TextInput, TouchableOpacity, ScrollView, Dimensions, Modal, FlatList, Alert, Animated, StatusBar, Pressable, Platform} from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 import { styles, width, height } from '../style';
 import { connect } from 'react-redux';
@@ -19,7 +19,7 @@ import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
 
 
-function DictionaryScreen(props) {
+function DictionaryScreen(props: any) {
     const { navigation, route } = props
 
     useFocusEffect(
@@ -45,7 +45,7 @@ function DictionaryScreen(props) {
                         setFavLoading(false);
                     } else {
                         setFavLoading(false);
-                        const arr = JSON.parse(favValues);
+                        const arr = JSON.parse(favValues || '');
                         const newArr = DictionaryList.filter(item => arr.includes(item.id));
                         setFavDictionaries(newArr);
                     } 
@@ -63,14 +63,14 @@ function DictionaryScreen(props) {
         }, [])
     )
     
-    const [isModalVisible, setModalVisible] = useState(false),
+    const [isModalVisible, setModalVisible] = useState<boolean>(false),
           [reloadScreen, setReloadScreen] = useState(true),
           [isLoading, setLoading] = useState(false),
           [isFavLoading, setFavLoading] = useState(true),
-          [cardIndex, setCardIndex] = useState(null),
+          [cardIndex, setCardIndex] = useState<any>(),
           [favDictionaries, setFavDictionaries] = useState(DictionaryList),
-          [selectedDictionary, setSelectedDictionary] = useState(defaultDictionary),
           [defaultDictionary, setDefaultDictionary] = useState(""),
+          [selectedDictionary, setSelectedDictionary] = useState<any>(defaultDictionary), 
           [inputWord, setInputWord] = useState(""),
           [sharedMimeType, setSharedMimeType] = useState(null);
 
@@ -109,9 +109,9 @@ function DictionaryScreen(props) {
 
         switch (selectedDictionary) {
             case 'EJ': 
-                ejdictdb.transaction(tx => {
+                ejdictdb.transaction((tx: any) => {
                     tx.executeSql(`SELECT item_id, word, mean, level FROM items WHERE word LIKE "${inputWord}";`,
-                            [], (_, results) => {
+                            [], (_: any, results: any) => {
                             console.log("Query completed");
                             const len = results.rows.length;
                             if (len > 0) {
@@ -194,10 +194,10 @@ function DictionaryScreen(props) {
     }
     
     if (reloadScreen) {
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(
               `SELECT name FROM sqlite_master WHERE (type = "table") AND (name != "sqlite_sequence" AND name != "android_metadata");`, [], 
-                (_, results) => {
+                (_: any, results: any) => {
                     const folderList = results.rows.raw();
                     props.updateFolderList(folderList);
                     setReloadScreen(false)
@@ -208,13 +208,13 @@ function DictionaryScreen(props) {
         })
     }
 
-    const folderToSave = (item) => {
+    const folderToSave = (item: any) => {
         const stringifiedPhonetics = escape(JSON.stringify(props.cardData[cardIndex].phonetics));
         const stringifiedMeanings = escape(JSON.stringify(props.cardData[cardIndex].meanings));
         const folderToInsert = item.name
         
         if (props.cardData[cardIndex].mean == null) {
-            UserDatabaseDB.transaction(tx => {
+            UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(
                     `INSERT INTO "${folderToInsert}" (word, phonetics, origin, meanings)
                     VALUES ("${props.cardData[cardIndex].word}", 
@@ -231,7 +231,7 @@ function DictionaryScreen(props) {
                 )
             })
         } else {
-            UserDatabaseDB.transaction(tx => {
+            UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(
                     `INSERT INTO "${folderToInsert}" (word, mean)
                     VALUES ("${props.cardData[cardIndex].word}", 
@@ -256,7 +256,9 @@ function DictionaryScreen(props) {
 
         const scrollX = useRef(new Animated.Value(0)).current;
 
-        const viewableItemsChanged = useRef(({viewableItems}) => {
+        const viewableItemsChanged = useRef(({
+            viewableItems
+        }: any) => {
             setCurrentIndex(viewableItems[0].index)
             console.log(viewableItems);
         }).current;
@@ -271,9 +273,9 @@ function DictionaryScreen(props) {
                 </View>
             )
         } else {
-            const [isThesaurusVisibleIndex, setThesaurusVisibleIndex] = useState([])
+            const [isThesaurusVisibleIndex, setThesaurusVisibleIndex] = useState<number[]>([])
             
-            const onPressHandler = (item) => {
+            const onPressHandler = (item: any) => {
                 if (isThesaurusVisibleIndex.includes(item)) {
                     setThesaurusVisibleIndex(isThesaurusVisibleIndex.filter(value => value !== item))
                 } else {
@@ -281,7 +283,7 @@ function DictionaryScreen(props) {
                 }
             }
 
-            const CardContent = (index) => {
+            const CardContent = (index: any) => {
                 switch (selectedDictionary) {
                     case 'EJ':
                         return (
@@ -310,50 +312,47 @@ function DictionaryScreen(props) {
                     case 'ko':
                         */
                     case 'en':
-                        const mappedDifinition = (item) => 
-                            <View>
-                                <Text style={{color: 'grey', fontSize:18}}>{item.partOfSpeech}</Text>
-                                {item.definitions.map((item, index) =>
-                                    <View style={{borderBottomWidth:10}}>
-                                        <Text style={{color:'white', fontSize:18}}>{item.definition}</Text>
-                                        <Text style={{color:'lightgrey', fontStyle:'italic', fontSize:18}}>{item.example}</Text>
-                                        {(item.synonyms.length || item.antonyms.length > 0) &&
-                                            <TouchableOpacity onPress={() => onPressHandler(item)} style={{alignItems:'flex-start'}}>
-                                                {!isThesaurusVisibleIndex.includes(item) &&
-                                                <Icon name='ellipsis1' type='antdesign' color='white' />
-                                                }
-                                                {isThesaurusVisibleIndex.includes(item) &&
-                                                    <View style={{flexDirection:'row', flexWrap:'wrap'}}>  
-                                                        {item.synonyms.map(item=>
-                                                            <Button buttonStyle={{backgroundColor:"green", borderRadius:40}}
-                                                                    onPress={() => {
-                                                                        setInputWord(item)
-                                                                    }} 
-                                                                    title={item} 
-                                                                    titleStyle={{color:'white', fontSize: 18}}/>
-                                                        )}
-                                                        {item.antonyms.map(item=>
-                                                            <Button buttonStyle={{backgroundColor:"red", borderRadius:40}} 
-                                                                    onPress={() => {
-                                                                        setInputWord(item)
-                                                                    }} 
-                                                                    title={item} 
-                                                                    titleStyle={{color:'white', fontSize: 18}}/>
-                                                        )}
-                                                    </View>
-                                                }
-                                            </TouchableOpacity>
-                                        }
-                                    </View>
-                                    )}
-                            </View>
+                        const mappedDifinition = (item: any) => <View>
+                            <Text style={{color: 'grey', fontSize:18}}>{item.partOfSpeech}</Text>
+                            {item.definitions.map((item: any, index: any) =>
+                                <View style={{borderBottomWidth:10}}>
+                                    <Text style={{color:'white', fontSize:18}}>{item.definition}</Text>
+                                    <Text style={{color:'lightgrey', fontStyle:'italic', fontSize:18}}>{item.example}</Text>
+                                    {(item.synonyms.length || item.antonyms.length > 0) &&
+                                        <TouchableOpacity onPress={() => onPressHandler(item)} style={{alignItems:'flex-start'}}>
+                                            {!isThesaurusVisibleIndex.includes(item) &&
+                                            <Icon name='ellipsis1' type='antdesign' color='white' />
+                                            }
+                                            {isThesaurusVisibleIndex.includes(item) &&
+                                                <View style={{flexDirection:'row', flexWrap:'wrap'}}>  
+                                                    {item.synonyms.map((item: any) => <Button buttonStyle={{backgroundColor:"green", borderRadius:40}}
+                                                            onPress={() => {
+                                                                setInputWord(item)
+                                                            }} 
+                                                            title={item} 
+                                                            titleStyle={{color:'white', fontSize: 18}}/>
+                                                    )}
+                                                    {item.antonyms.map((item: any) => <Button buttonStyle={{backgroundColor:"red", borderRadius:40}} 
+                                                            onPress={() => {
+                                                                setInputWord(item)
+                                                            }} 
+                                                            title={item} 
+                                                            titleStyle={{color:'white', fontSize: 18}}/>
+                                                    )}
+                                                </View>
+                                            }
+                                        </TouchableOpacity>
+                                    }
+                                </View>
+                                )}
+                        </View>
 
                         return (
                             <Card containerStyle={{backgroundColor:'black', width: cardWindowWidth, borderRadius:5}}>
                                 <Text style={{color:'white',fontSize:30,fontWeight:"bold",marginTop:10, marginLeft:10}}>
                                     {props.cardData[index].word}
                                 </Text>
-                                {props.cardData[index].phonetics.map((item, index)=> 
+                                {props.cardData[index].phonetics.map((item: any, index: any)=> 
                                     <View style={{flexDirection:'row'}}>
                                         {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={index}>| {item.text} |</Text>}
                                         {item.audio != (undefined || "") && <AudioPlayer url={item.audio}/>}
@@ -370,7 +369,7 @@ function DictionaryScreen(props) {
                                     </Text>
                                 </View>
                             </Card>
-                        )
+                        );
                 }
             }
             
@@ -383,15 +382,18 @@ function DictionaryScreen(props) {
                         data={props.cardData}
                         keyExtractor={(item, index) => 'key'+index}
                         showsHorizontalScrollIndicator={false}
-                        renderItem={({_, index})=> {
+                        renderItem={(index)=> {
                             return (
-                                <ScrollView vertical>
-                                    <TouchableOpacity 
+                                <ScrollView>
+                                    <Pressable
                                         style={{padding: 5}}
-                                        onPress={() => setModalVisible(true) & setCardIndex(index)}
+                                        onPress={() => {
+                                            setModalVisible(true)
+                                            setCardIndex(index)
+                                        }}
                                         >
                                         {CardContent(index)}                        
-                                    </TouchableOpacity>
+                                    </Pressable>
                                 </ScrollView>
                             )
                         }}
@@ -434,14 +436,14 @@ function DictionaryScreen(props) {
     if (isFavLoading) {
         return (
             <SafeAreaView style={{flex:40, backgroundColor:'black', alignItems:"center", justifyContent:'center', paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
-                <StatusBar style='light' />
-                <ActivityIndicator size='large' />
+                <StatusBar barStyle='light-content' />
+                <ActivityIndicator size='large'/>
                 <Text style={{color: 'grey',margin:10, fontSize:16}}>{strings.loading}</Text>
             </SafeAreaView>
         )
     } else {
         return (
-            <SafeAreaView style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
+            <SafeAreaView style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]} >
                 <Modal 
                     animationType='fade'
                     transparent={true}
@@ -459,7 +461,7 @@ function DictionaryScreen(props) {
                                 data={props.folderList}
                                 renderItem={({item})=> {
                                     return (
-                                        <ScrollView vertical>
+                                        <ScrollView>
                                             <View style={itemBoxStyles.container}>
                                                 <TouchableOpacity 
                                                     style={{padding: 20}}
@@ -482,7 +484,7 @@ function DictionaryScreen(props) {
                         </View>
                     </View>       
                 </Modal>
-                <StatusBar style='light' />
+                <StatusBar barStyle='light-content' />
                 <View style={styles.searchContainer}>
                     <Icon name="text-search" type='material-community' size={30} color="white" />
                     <TextInput
@@ -497,9 +499,12 @@ function DictionaryScreen(props) {
                 <View style={styles.searchContainer}>
                     <Icon name="book-open-page-variant" type='material-community' size={30} color="white" />
                     <RNPickerSelect
-                        onValueChange={(value) => setSelectedDictionary(value) & props.updateCardData(null)}
+                        onValueChange={(value) => {
+                            setSelectedDictionary(value)
+                            props.updateCardData(null)
+                        }}
                         placeholder={{label: strings.selectADictionary, color: 'grey'}}
-                        style={{inputAndroid: [styles.input, {color:'black'}], inputIOS: styles.input}}
+                        style={{inputAndroid: {...styles.input, color:'black'}, inputIOS: styles.input}}
                         items={favDictionaries}
                         value={selectedDictionary}
                         useNativeAndroidPickerStyle={false}
@@ -517,7 +522,7 @@ function DictionaryScreen(props) {
     }
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         cardData: state.cardData,
         folderList: state.folderList,

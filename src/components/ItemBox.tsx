@@ -6,8 +6,8 @@ import { width } from '../components/page/style';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 
 
-export const ItemBox = (props) => {
-    const swipeToDelete = (progress, dragX) => {
+export const ItemBox = (props: any) => {
+    const swipeToDelete = (progress: any, dragX: any) => {
         const scale = dragX.interpolate({
             inputRange: [0, 500],
             outputRange: [0.9, 0]
@@ -17,13 +17,13 @@ export const ItemBox = (props) => {
             <View style={itemBoxStyles.deleteBox}>
                 <TouchableOpacity onPress={props.handleDelete}>
                     <Animated.View style={{transform:[{scale: scale}]}}>
-                        <Icon type='material-community' name='delete' color='white' size={30}/>
+                        <Icon type='material-community' name='delete' color='white' size={30} tvParallaxProperties={undefined}/>
                     </Animated.View>
                 </TouchableOpacity>
             </View>
         )
     }
-    const swipeToEdit = (progress, dragX) => {
+    const swipeToEdit = (progress: any, dragX: any) => {
         const scale = dragX.interpolate({
             inputRange: [0, 80],
             outputRange: [0.85, 1]
@@ -39,6 +39,7 @@ export const ItemBox = (props) => {
             </View>
         )
     }
+
     return (
         <Swipeable renderRightActions={swipeToDelete} renderLeftActions={swipeToEdit}>
             <TouchableOpacity onPress={props.handleBrowse}>
@@ -46,8 +47,8 @@ export const ItemBox = (props) => {
                     <Text style={{color:'white', fontSize: 20}}>{props.data}</Text>
                 </View>
             </TouchableOpacity>
-        </Swipeable>   
-    )
+        </Swipeable> 
+    )     
 }
 
 export const itemBoxStyles = StyleSheet.create({

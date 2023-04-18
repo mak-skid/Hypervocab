@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, FlatList, Text, ScrollView, Alert, StatusBar} from 'react-native';
+import { View, FlatList, Text, ScrollView, Alert, StatusBar, Platform} from 'react-native';
 import { Header, Icon, Card } from 'react-native-elements';
 import { styles, width } from '../style';
 import { TextInput } from 'react-native';
@@ -11,7 +11,7 @@ import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
 
 
-const EditCard = (props) => {
+const EditCard = (props: any) => {
     const { folderList, savedWordList, navigation, route } = props
     const { parsedPhonetics, parsedMeanings, cardIndex, browsingFolder } = route.params
 
@@ -25,23 +25,23 @@ const EditCard = (props) => {
     const SaveEditedCard = () => {
         const stringifiedMeanings = escape(JSON.stringify(isEditCardMeaningsValue));
         if (isEditCardMeanValue) {
-            UserDatabaseDB.transaction(tx => {
+            UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(
                     `UPDATE "${browsingFolder}" 
                     SET word = "${isEditCardWordValue}",
                         mean = "${isEditCardMeanValue}",
                         level = ${isEditCardLevel}
                     WHERE item_id = ${savedWordList[cardIndex].item_id};`,[],
-                (_, results) => {
+                (_: any, results: any) => {
                     console.log('edited word');
-                    Alert.alert(null, strings.editedSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}]);
+                    Alert.alert('', strings.editedSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}]);
                     setReloadScreen(true);
                 },
                 () => alert(strings.errorEditingCard)
                 )
             })
         } else {
-            UserDatabaseDB.transaction(tx => {
+            UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(
                     `UPDATE "${browsingFolder}" 
                     SET word = "${isEditCardWordValue}",
@@ -49,9 +49,9 @@ const EditCard = (props) => {
                         origin = "${isEditCardOriginValue}",
                         level = ${isEditCardLevel}
                     WHERE item_id = ${savedWordList[cardIndex].item_id};`,[],
-                (_, results) => {
+                (_: any, results: any) => {
                     console.log('edited word');
-                    Alert.alert(null, strings.editedSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}]);
+                    Alert.alert('', strings.editedSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}]);
                     setReloadScreen(true);
                 },
                 () => alert(strings.errorEditingCard)
@@ -61,9 +61,9 @@ const EditCard = (props) => {
     }
 
     if (reloadScreen) {
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(`SELECT item_id, word, mean, meanings, phonetics, origin, level FROM '${browsingFolder}';`, [],
-            (_, results) => {
+            (_: any, results: any) => {
                 const savedWord = results.rows.raw()
                 props.updateSavedWordList(savedWord);
                 setReloadScreen(false);
@@ -75,16 +75,16 @@ const EditCard = (props) => {
 
     return (
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            <StatusBar style='light'/>
+            <StatusBar barStyle='light-content'/>
             <View style={{backgroundColor:'black', flex:1}}>
                 <Header 
                     backgroundColor='black'
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
-                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={()=> navigation.navigate('BrowseFolder')}/>}
+                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('BrowseFolder')} tvParallaxProperties={undefined}/>}
                     centerComponent={{text: strings.edit, style:{color: 'white', fontSize:20}}}
-                    rightComponent={<Icon name='save-alt' type='material' color='white' onPress={()=> SaveEditedCard()}/>}
+                    rightComponent={<Icon name='save-alt' type='material' color='white' onPress={() => SaveEditedCard()} tvParallaxProperties={undefined}/>}
                 />
-                <ScrollView vertical>
+                <ScrollView>
                 <Card containerStyle={{backgroundColor:'black', width: width*0.9, borderRadius:5}}>
                     <TextInput 
                         style={{color:'white',fontSize:30,fontWeight:"bold",marginVertical:10, borderColor:'black', borderWidth:1, borderRadius:5}} 
@@ -106,11 +106,10 @@ const EditCard = (props) => {
                         /> : null}
                     {isEditCardMeaningsValue ? 
                         <View>
-                            {parsedPhonetics.map((item)=> 
-                                <View style={{flexDirection:'row'}}>
-                                    {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={item}>| {item.text} |</Text>}
-                                    {item.audio != undefined && <AudioPlayer url={item.audio}/>}
-                                </View>
+                            {parsedPhonetics.map((item: any) => <View style={{flexDirection:'row'}}>  
+                                {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={item}>| {item.text} |</Text>}
+                                {item.audio != undefined && <AudioPlayer url={item.audio}/>}
+                            </View>
                                 )
                             }
                             <FlatList
@@ -120,7 +119,7 @@ const EditCard = (props) => {
                                 keyExtractor={(item, index) => 'key'+index}
                                 renderItem={({item, index})=> {
                                     const childData = isEditCardMeaningsValue[index].definitions;
-                                    return (
+                                    return (           
                                         <View>
                                             <TextInput 
                                                 style={{color: 'grey', fontSize:18, backgroundColor:'black', marginTop: 10}}
@@ -139,7 +138,7 @@ const EditCard = (props) => {
                                                 scrollEnabled={false}
                                                 keyExtractor={(item, index) => 'key(defintion)' + index}
                                                 renderItem={({item, index}) => {
-                                                    return (
+                                                    return (          
                                                         <View>
                                                             <TextInput 
                                                                 style={{color:'white',fontSize:18, backgroundColor:'black', borderRadius:5, borderColor:'black', borderWidth:1}} 
@@ -191,8 +190,8 @@ const EditCard = (props) => {
                             onValueChange={(value) => setEditCardLevel(value)}
                             placeholder={{label: strings.selectLevel, color: 'grey'}}
                             style={{
-                                inputAndroid: [styles.input, {color:'black', marginHorizontal: 0}], 
-                                inputIOS: [styles.input, {width: width*0.8, marginHorizontal: 0, marginTop:10}]
+                                inputAndroid: {...styles.input, color:'black', marginHorizontal: 0}, 
+                                inputIOS:{...styles.input, width: width*0.8, marginHorizontal: 0, marginTop:10}
                             }}
                             items={[
                                 {label: strings.label0, value: 0},
@@ -211,10 +210,10 @@ const EditCard = (props) => {
                 </ScrollView>
             </View>
         </View>
-    )
+    );
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,

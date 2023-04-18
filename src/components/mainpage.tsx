@@ -31,10 +31,12 @@ export default function RootStack() {
                             //tabBarShowLabel: false,
                             tabBarLabel: 'Dictionary',
                             tabBarIcon: (color) => (
-                              <Icon name='book-open-page-variant' type='material-community' size={33} color={color.color} />
+                    
+                              <Icon name='book-open-page-variant' type='material-community' size={33} color={color.color} tvParallaxProperties={undefined} />
                             ),
                           }}
                         />
+          
                     <Stack.Screen
                         name="MemoriseStackScreen"
                         component={MemoriseStackScreen}
@@ -42,10 +44,12 @@ export default function RootStack() {
                             //tabBarShowLabel: false,
                             tabBarLabel: 'Memorise',
                             tabBarIcon: (color) => (
-                              <Icon name='head-sync' type='material-community' size={40} color={color.color} />
+                    
+                              <Icon name='head-sync' type='material-community' size={40} color={color.color} tvParallaxProperties={undefined} />
                             ),
                           }}
                         />
+          
                     <Stack.Screen
                         name="FolderStackScreen"
                         component={FoldersStackScreen}
@@ -53,7 +57,8 @@ export default function RootStack() {
                             //tabBarShowLabel: false,
                             tabBarLabel: 'Folders',
                             tabBarIcon: (color) => (
-                              <Icon name='folder-multiple' type='material-community' size={30} color={color.color} />
+                    
+                              <Icon name='folder-multiple' type='material-community' size={30} color={color.color} tvParallaxProperties={undefined} />
                             ),
                           }}
                         />

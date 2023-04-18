@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, SafeAreaView, FlatList, Text, ScrollView, TouchableOpacity, StatusBar} from 'react-native';
+import { View, SafeAreaView, FlatList, Text, ScrollView, TouchableOpacity, StatusBar, Platform} from 'react-native';
 import { Header } from 'react-native-elements';
 import { styles, height } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
@@ -8,12 +8,12 @@ import { itemBoxStyles } from '../../ItemBox';
 import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
 
-function MemoriseScreen(props) {
+function MemoriseScreen(props: any) {
     const {folderList, savedWordList, navigation} = props
     
     return(
-        <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            <StatusBar style='light'/>
+        <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}> 
+            <StatusBar barStyle='light-content'/>
             <SafeAreaView style={{
                 backgroundColor: 'black',
                 alignItems: 'stretch',
@@ -30,7 +30,7 @@ function MemoriseScreen(props) {
                     data={folderList}
                     renderItem={({item, index})=> {
                         return (
-                            <ScrollView vertical>
+                            <ScrollView>
                                 <View style={itemBoxStyles.container}>
                                     <TouchableOpacity 
                                         style={{padding: 20}}
@@ -56,7 +56,7 @@ function MemoriseScreen(props) {
 }
 
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,

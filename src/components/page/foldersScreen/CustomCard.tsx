@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Alert, StatusBar } from 'react-native';
+import { View, ScrollView, Alert, StatusBar, Platform } from 'react-native';
 import { Header, Icon, Card } from 'react-native-elements';
 import { styles, width } from '../style';
 import { TextInput } from 'react-native';
@@ -10,7 +10,7 @@ import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 
-const CustomCard = (props) => {
+const CustomCard = (props: any) => {
     const {folderList, savedWordList, navigation, route} = props
 
     const [reloadScreen, setReloadScreen] = useState(true),
@@ -19,14 +19,14 @@ const CustomCard = (props) => {
           
     const SaveCustomCard = () => {
         const browsingFolder = route.params.item
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(
                 `INSERT INTO "${browsingFolder}" (word, mean, level)
                  VALUES("${isEditCardWordValue}", "${isEditCardMeanValue}", 0);`,[],
-            (_, results) => {
+            (_: any, results: any) => {
                 console.log('saved word');
                 setReloadScreen(true);
-                Alert.alert(null, strings.createdSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}])
+                Alert.alert('', strings.createdSuccessfully, [{text: 'OK', onPress: () => navigation.navigate('BrowseFolder')}])
             },
             () => alert(strings.errorSaving)
             )
@@ -35,9 +35,9 @@ const CustomCard = (props) => {
 
     if (reloadScreen) {
         const browsingFolder = route.params.item
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(`SELECT item_id, word, mean, level, meanings, phonetics FROM "${browsingFolder}";`, [],
-            (_, results) => {
+            (_: any, results: any) => {
                 const savedWord = results.rows.raw()
                 props.updateSavedWordList(savedWord);
                 setReloadScreen(false);
@@ -47,18 +47,18 @@ const CustomCard = (props) => {
         })
     }
 
-    return (
+    return ( 
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            <StatusBar style='light'/>
-            <View style={{backgroundColor:'black', flex:1}}>
+            <StatusBar barStyle='light-content'/>
+            <View style={{backgroundColor:'black', flex:1}}>    
                 <Header 
                     backgroundColor='black'
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
-                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={()=> navigation.navigate('BrowseFolder')}/>}
+                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('BrowseFolder')} tvParallaxProperties={undefined}/>}
                     centerComponent={{text: 'Create a card', style:{color: 'white', fontSize:20}}}
-                    rightComponent={<Icon name='save-alt' type='material' color='white' onPress={()=> SaveCustomCard()}/>}
+                    rightComponent={<Icon name='save-alt' type='material' color='white' onPress={() => SaveCustomCard()} tvParallaxProperties={undefined}/>}
                 />
-                <ScrollView vertical>
+                <ScrollView>
                 <Card containerStyle={{backgroundColor:'black', width: width*0.9, borderRadius:5}}>
                     <TextInput 
                         style={{color:'white',fontSize:30,fontWeight:"bold",marginVertical:10}} 
@@ -73,6 +73,7 @@ const CustomCard = (props) => {
                         defaultValue={isEditCardMeanValue} 
                         placeholder={strings.typeDefinitionAnswer}
                         placeholderTextColor="grey"
+                        // @ts-expect-error TS(17001): JSX elements cannot have multiple attributes with ... Remove this comment to see the full error message
                         multiline={true}
                         onChangeText={setEditCardMeanValue}
                         /> 
@@ -84,7 +85,7 @@ const CustomCard = (props) => {
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,

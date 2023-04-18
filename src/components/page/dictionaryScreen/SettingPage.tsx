@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, SafeAreaView, FlatList, Modal, Text, ScrollView, TouchableOpacity, SectionList, Linking, ActivityIndicator, StatusBar } from 'react-native';
+import { View, SafeAreaView, FlatList, Modal, Text, ScrollView, TouchableOpacity, SectionList, Linking, ActivityIndicator, StatusBar, Platform } from 'react-native';
 import { Header, Icon, Button } from 'react-native-elements';
 import { styles, height } from '../style';
 import { updateSelectedLanguage } from '../../../actions';
@@ -12,14 +12,14 @@ import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 
-const SettingPage = (props) => {
+const SettingPage = (props: any) => {
     const { navigation } = props
 
     const [isModalVisible, setModalVisible] = useState(false),
           [isLoading, setLoading] = useState(true),
           [defaultDictionary, setDefaultDictionary] = useState('');
 
-    useEffect(async() => {
+    useEffect(() => {(async() => {
         try {
             const value = await AsyncStorage.getItem('DefaultDictionary');
             if (value !== null) {
@@ -29,10 +29,10 @@ const SettingPage = (props) => {
             setLoading(false);
         } catch(e) {
             console.log('error');
-        } 
+        }})()
     },[]);
 
-    const arrowIcon = <Icon name='right' type='antdesign' color='white' />
+    const arrowIcon = <Icon name='right' type='antdesign' color='white' tvParallaxProperties={undefined} />
     const defaultDictionaryIndicator =  isLoading ? <ActivityIndicator /> : defaultDictionary
 
     const data = [
@@ -60,7 +60,7 @@ const SettingPage = (props) => {
         }  
     ]
 
-    const onPressHandler = (item) => {
+    const onPressHandler = (item: any) => {
         switch (item.desc) {
             case strings.guide:
                 console.log('this is ', item.desc)
@@ -90,7 +90,7 @@ const SettingPage = (props) => {
         }
     }
 
-    const saveConfig = async (props) => {
+    const saveConfig = async (props: any) => {
         try {
             await AsyncStorage.setItem('DefaultDictionary', props.value)
             console.log(props.value);
@@ -119,11 +119,11 @@ const SettingPage = (props) => {
                             data={DictionaryList}
                             renderItem={({item})=> {
                                 return (
-                                    <ScrollView vertical>
+                                    <ScrollView>
                                         <View style={itemBoxStyles.container}>
                                             <TouchableOpacity 
                                                 style={{padding: 20}}
-                                                onPress={() => saveConfig(item) & setModalVisible(false) & setDefaultDictionary(item.label)}
+                                                onPress={() => [saveConfig(item), setModalVisible(false), setDefaultDictionary(item.label)]}
                                                 >
                                                 <Text style={{color:'white', fontSize: 20}}>{item.label}</Text>
                                             </TouchableOpacity>
@@ -142,7 +142,7 @@ const SettingPage = (props) => {
 
     return (
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            <StatusBar style='light'/>
+            <StatusBar barStyle='light-content'/>
             <SafeAreaView style={{
                 backgroundColor: 'black',
                 alignItems: 'stretch',
@@ -153,13 +153,9 @@ const SettingPage = (props) => {
                     backgroundColor='black'
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
                     leftComponent={
-                        <Icon name='arrowleft'
-                              type='antdesign'
-                              color='white' 
-                              onPress={()=> navigation.navigate('DictionaryScreen')}
-                        />}
-                    centerComponent={{text: strings.settings, style:{color: 'white', fontSize:20}}}
-                />
+                        <Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('DictionaryScreen')} tvParallaxProperties={undefined}/>
+                    }
+                    centerComponent={{text: strings.settings, style:{color: 'white', fontSize:20}}}/>
                 <SectionList
                     sections={data}
                     keyExtractor={(item) => item.desc}
@@ -179,7 +175,7 @@ const SettingPage = (props) => {
                     }}
                     renderSectionHeader={({ section: { title } }) => (
                         <Text style={{color:'white', margin:10, fontSize:18, fontWeight:'bold'}}>{title}</Text>
-                      )}
+                    )}
                 />
                 <ModalForSetting />
             </SafeAreaView>
@@ -188,7 +184,7 @@ const SettingPage = (props) => {
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         selectedLanguage: state.selectedLanguage,
     }

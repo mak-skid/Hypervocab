@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { View, SafeAreaView, FlatList, Text, ScrollView, Alert, Pressable, StatusBar } from 'react-native';
+import { View, SafeAreaView, FlatList, Text, ScrollView, Alert, Pressable, StatusBar, Platform} from 'react-native';
 import { Header, Icon, Button, Card } from 'react-native-elements';
 import { height, styles, width } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
@@ -11,7 +11,7 @@ import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 
-const SwipeCard = (props) => {
+const SwipeCard = (props: any) => {
     const {savedWordList, navigation, route} = props
 
     const [reloadScreen, setReloadScreen] = useState(true);
@@ -20,9 +20,9 @@ const SwipeCard = (props) => {
     const time = new Date();
 
     const DatabaseAccess = useCallback(() => {
-        UserDatabaseDB.transaction(tx => {
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(`SELECT item_id, word, mean, meanings, origin, phonetics, level, due_date FROM "${FolderToMemorise}" WHERE (level < 6) AND (due_date < ${time.getTime()} OR due_date IS NULL);`, [],
-            (_, results) => {
+            (_: any, results: any) => {
                 console.log('Got a saved list in the folder: ' + FolderToMemorise);
                 const savedWord = results.rows.raw()
                 props.updateSavedWordList(savedWord)
@@ -35,11 +35,11 @@ const SwipeCard = (props) => {
 
     useFocusEffect(DatabaseAccess);
     
-    const updateLevelNo = ({item_id}) => {   
-        UserDatabaseDB.transaction(tx => {
+    const updateLevelNo = ({item_id}: any) => {   
+        UserDatabaseDB.transaction((tx: any) => {
             tx.executeSql(
                 `UPDATE "${FolderToMemorise}" SET level = 1, due_date = ${time.setMinutes(time.getMinutes()+1)} WHERE item_id = ${item_id};`, [],
-            (_, results) => {
+            (_: any, results: any) => {
                 console.log('Updated: ' + FolderToMemorise);
                 setReloadScreen(true);
                 DatabaseAccess();
@@ -49,15 +49,15 @@ const SwipeCard = (props) => {
         })
     }
 
-    const updateLevelSoSo = ({item_id, level}) => {
-        UserDatabaseDB.transaction(tx => {
+    const updateLevelSoSo = ({item_id,level}: any) => {
+        UserDatabaseDB.transaction((tx: any) => {
             switch (level) {
                 case 0:
                 case 1:
                 case 2:
                     tx.executeSql(
                         `UPDATE "${FolderToMemorise}" SET level = 2, due_date = ${time.setMinutes(time.getMinutes()+10)} WHERE item_id = ${item_id};`, [],
-                        (_, results) => {
+                        (_: any, results: any) => {
                             console.log('Updated: ' + FolderToMemorise);
                             setReloadScreen(true);
                         },
@@ -69,7 +69,7 @@ const SwipeCard = (props) => {
                 case 5: 
                     tx.executeSql(
                         `UPDATE "${FolderToMemorise}" SET level = 3, due_date = ${time.setDate(time.getDate()+1)} WHERE item_id = ${item_id};`, [],
-                        (_, results) => {
+                        (_: any, results: any) => {
                             console.log('Updated: ' + FolderToMemorise);
                             setReloadScreen(true);
                         },
@@ -83,15 +83,15 @@ const SwipeCard = (props) => {
         })
     }
 
-    const updateLevelGood = ({item_id, level}) => {
-        UserDatabaseDB.transaction(tx => {
+    const updateLevelGood = ({item_id,level}: any) => {
+        UserDatabaseDB.transaction((tx: any) => {
             switch (level) {
                 case 0:
                 case 1:
                 case 2:
                     tx.executeSql(
                         `UPDATE "${FolderToMemorise}" SET level = 3, due_date = ${time.setDate(time.getDate()+1)} WHERE item_id = ${item_id};`, [],
-                        (_, results) => {
+                        (_: any, results: any) => {
                             console.log('Updated: ' + FolderToMemorise);
                             setReloadScreen(true);
                         },
@@ -101,7 +101,7 @@ const SwipeCard = (props) => {
                 case 3:
                     tx.executeSql(
                         `UPDATE "${FolderToMemorise}" SET level = 4, due_date = ${time.setDate(time.getDate()+4)} WHERE item_id = ${item_id};`, [],
-                        (_, results) => {
+                        (_: any, results: any) => {
                             console.log('Updated: ' + FolderToMemorise);
                             setReloadScreen(true);
                         },
@@ -111,7 +111,7 @@ const SwipeCard = (props) => {
                 case 4:
                     tx.executeSql(
                         `UPDATE "${FolderToMemorise}" SET level = 5, due_date = ${time.setDate(time.getDate()+7)} WHERE item_id = ${item_id};`, [],
-                        (_, results) => {
+                        (_: any, results: any) => {
                             console.log('Updated: ' + FolderToMemorise);
                             setReloadScreen(true);
                         },
@@ -121,7 +121,7 @@ const SwipeCard = (props) => {
                 case 5: 
                     tx.executeSql(
                         `UPDATE "${FolderToMemorise}" SET level = 6, due_date = 0 WHERE item_id = ${item_id};`, [],
-                        (_, results) => {
+                        (_: any, results: any) => {
                             console.log('Updated: ' + FolderToMemorise);
                             Alert.alert(strings.congraturations, strings.clearedThisCard)
                             setReloadScreen(true);
@@ -139,16 +139,18 @@ const SwipeCard = (props) => {
     const [currentIndex, setCurrentIndex] = useState(0),
           [showContent, setShowContent] = useState(false);
 
-    const viewableItemsChanged = useRef(({viewableItems}) => {
+    const viewableItemsChanged = useRef(({
+        viewableItems
+    }: any) => {
         setCurrentIndex(viewableItems[0].index)
     }).current;
 
     const viewConfig = useRef({ viewAreaCoveragePercentThreshold: 50}).current;
 
-    const refContainer = useRef(null);
+    const refContainer = useRef<any>(null);
 
-    const mainRenderItem = ({item, index}) => {
-        const onPressHandler = (index) => {
+    const mainRenderItem = ({item,index}: any) => {
+        const onPressHandler = (index: any) => {
             if (savedWordList.length === 1) {
                 Alert.alert(strings.finished, strings.finishedDetail);
             } else {
@@ -160,7 +162,7 @@ const SwipeCard = (props) => {
             if (item.mean) {
                 return (
                     <View>
-                        <ScrollView showsVerticalScrollIndicator={true} vertical>
+                        <ScrollView showsVerticalScrollIndicator={true}>  
                             <Text style={{color:'white',fontSize:18}}>
                                 {item.mean.replaceAll("/","\n\n")}
                             </Text>
@@ -171,22 +173,21 @@ const SwipeCard = (props) => {
                 const parsedMeanings = JSON.parse(unescape(item.meanings))
                 const parsedPhonetics = JSON.parse(unescape(item.phonetics))
 
-                return (
+                return (    
                     <View>
-                        {parsedPhonetics.map((item)=> 
-                            <View style={{flexDirection: 'row'}}>
+                        {parsedPhonetics.map((item: any) => 
+                            <View style={{flexDirection: 'row'}}>  
                                 {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={index}>| {item.text} |</Text>}
                                 {item.audio != undefined && <AudioPlayer url={item.audio}/>}
                             </View>
-                            )
-                        }
+                        )}
                         <FlatList
                             data={parsedMeanings}
                             scrollEnabled={false}
                             keyExtractor={(item, index) => 'key'+index}
                             renderItem={({item, index})=> {
                                 const childData = parsedMeanings[index].definitions;
-                                return (
+                                return (           
                                     <View>
                                         <Text style={{color: 'grey', fontSize:18, marginTop: 10}}>{item.partOfSpeech}</Text>
                                         <FlatList
@@ -211,13 +212,13 @@ const SwipeCard = (props) => {
                         <Text style={{color:'white', fontWeight: 'bold', fontSize:18, marginTop:10}}>{strings.origin}</Text>
                         <Text style={{color:'white',fontSize:18}}>{item.origin}</Text>
                     </View>
-                )
+                );
             }
         }
     
         return (
             <View>
-                <Card containerStyle={{backgroundColor:'black', borderRadius:5, width:width*0.9, flex: 1}}>
+                <Card containerStyle={{backgroundColor:'black', borderRadius:5, width:width*0.9, flex: 1}}>  
                     <Pressable onPress={() => setShowContent(true)} disabled={showContent} style={{height: height*0.65}} >
                         <ScrollView showsVerticalScrollIndicator={false} scrollEnabled={showContent} contentContainerStyle={{flex:1, flexDirection:'column'}}>
                             <Text style={{color:'white',fontSize:30, fontWeight:"bold"}}>
@@ -234,9 +235,9 @@ const SwipeCard = (props) => {
                 {showContent ? 
                     <View style={{justifyContent:'flex-end', backgroundColor:'black'}}>
                         <View style={{flexDirection: 'row', justifyContent:'space-evenly', margin:10 }}>
-                            <Button icon={<Icon name='close' type='material-community' color='white'/>} buttonStyle={{backgroundColor:'red', borderRadius:20, width: width*0.2}} onPress={() => onPressHandler(index) & updateLevelNo({item_id: item.item_id})}/>
-                            <Button icon={<Icon name='triangle-outline' type='material-community' color='white'/>} buttonStyle={{backgroundColor:'orange', borderRadius:20, width: width*0.2}} onPress={() => onPressHandler(index) & updateLevelSoSo({item_id: item.item_id, level: item.level})}/>
-                            <Button icon={<Icon name='circle-outline' type='material-community' color='white'/>} buttonStyle={{borderRadius:20, width: width*0.2}} onPress={() => onPressHandler(index) & updateLevelGood({item_id: item.item_id, level: item.level})}/>
+                            <Button icon={<Icon name='close' type='material-community' color='white' tvParallaxProperties={undefined}/>} buttonStyle={{backgroundColor:'red', borderRadius:20, width: width*0.2}} onPress={() => [onPressHandler(index), updateLevelNo({item_id: item.item_id})]}/>
+                            <Button icon={<Icon name='triangle-outline' type='material-community' color='white' tvParallaxProperties={undefined}/>} buttonStyle={{backgroundColor:'orange', borderRadius:20, width: width*0.2}} onPress={() => [onPressHandler(index), updateLevelSoSo({item_id: item.item_id, level: item.level})]}/>
+                            <Button icon={<Icon name='circle-outline' type='material-community' color='white' tvParallaxProperties={undefined}/>} buttonStyle={{borderRadius:20, width: width*0.2}} onPress={() => [onPressHandler(index), updateLevelGood({item_id: item.item_id, level: item.level})]}/>
                         </View>
                     </View>
                  : 
@@ -246,9 +247,9 @@ const SwipeCard = (props) => {
         )
     }
 
-    return (
+    return (   
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            <StatusBar style='light'/>
+            <StatusBar barStyle='light-content'/>
             <SafeAreaView style={{
                 backgroundColor: 'black',
                 alignItems: 'center',
@@ -256,8 +257,8 @@ const SwipeCard = (props) => {
                 }}>
                 <Header 
                     backgroundColor='black'
-                    containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
-                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={()=> navigation.navigate('MemoriseScreen')}/>}
+                    containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }} 
+                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('MemoriseScreen')} tvParallaxProperties={undefined}/>}
                     centerComponent={{text: strings.memorise, style:{color: 'white', fontSize:20}}}
                     rightComponent={{text: (props.savedWordList.length != 0) ? /*(currentIndex+1) + '/'*/ props.savedWordList.length : null, style:{color: 'white', fontSize:20}}}
                     />
@@ -274,7 +275,7 @@ const SwipeCard = (props) => {
                     onViewableItemsChanged={viewableItemsChanged}
                     onScroll={() => setShowContent(false)}
                     ref={refContainer}
-                    ListEmptyComponent={
+                    ListEmptyComponent={  
                         <View style={{alignItems: 'center', margin: width*0.1}}>
                             <Text style={{color:'grey', fontSize:20}}>{strings.noCardInFolder}</Text>
                         </View>
@@ -287,7 +288,7 @@ const SwipeCard = (props) => {
 }
     
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,

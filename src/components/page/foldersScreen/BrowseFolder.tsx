@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { View, SafeAreaView, FlatList, Text, ScrollView, TouchableOpacity, Alert, StatusBar } from 'react-native';
+import { View, SafeAreaView, FlatList, Text, ScrollView, TouchableOpacity, Alert, StatusBar, Platform } from 'react-native';
 import { Header, Icon } from 'react-native-elements';
 import { styles, height } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
@@ -10,7 +10,7 @@ import { UserDatabaseDB } from '../../openDatabase';
 import { strings } from '../strings';
 
 
-const BrowseFolder = (props) => {
+const BrowseFolder = (props: any) => {
     const {folderList, savedWordList, navigation, route} = props
 
     const [isBrowsingFolderName, setBrowsingFolderName] = useState("");
@@ -19,9 +19,9 @@ const BrowseFolder = (props) => {
         const spliced = [...folderList].splice(route.params.index, 1);
         for (var i = 0; i < spliced.length; i++) {
             const browsingFolder = spliced[i].name
-            UserDatabaseDB.transaction(tx => {
+            UserDatabaseDB.transaction((tx: any) => {
                 tx.executeSql(`SELECT item_id, word, mean, meanings, phonetics, origin, level FROM '${browsingFolder}';`, [],
-                (_, results) => {
+                (_: any, results: any) => {
                     console.log('Got a saved list in the folder: ' + browsingFolder);
                     const savedWord = results.rows.raw()
                     props.updateSavedWordList(savedWord)
@@ -34,12 +34,12 @@ const BrowseFolder = (props) => {
         }
     },[]))
 
-    const savedWordsRenderItem = ({item, index})=> {
+    const savedWordsRenderItem = ({item,index}: any)=> {
         const parsedMeanings = JSON.parse(unescape(savedWordList[index].meanings));
         const parsedPhonetics = JSON.parse(unescape(savedWordList[index].phonetics));
 
         return (
-            <ScrollView vertical>
+            <ScrollView>
                 <TouchableOpacity onPress={() => navigation.navigate('EditCard', {cardIndex: index, parsedPhonetics: parsedPhonetics, parsedMeanings: parsedMeanings, browsingFolder: isBrowsingFolderName})}>
                     <View style={{borderColor:'grey', borderBottomWidth:1}}>
                         <View style={{flexDirection:'row', justifyContent: 'space-between'}}>
@@ -56,26 +56,26 @@ const BrowseFolder = (props) => {
 
     return (
         <View style={[styles.container, {paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}]}>
-            <StatusBar style='light'/>
+            <StatusBar barStyle='light-content'/> 
             <SafeAreaView style={{
                 backgroundColor: 'black',
                 alignItems: 'stretch',
                 justifyContent: 'space-between',
                 flex: 1,
-                }}>
+                }}> 
                 <Header 
                     backgroundColor='black'
-                    containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }}
-                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={()=> navigation.navigate('FolderScreen')}/>}
+                    containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }} 
+                    leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('FolderScreen')} tvParallaxProperties={undefined}/>}
                     centerComponent={{text: strings.browsing + isBrowsingFolderName + '"', style:{color: 'white', fontSize:20}}}
-                    rightComponent={<Icon name='select1' type='antdesign' color='white' onPress={()=> navigation.navigate('HandleSelectedWord', {item: isBrowsingFolderName})}/>}
+                    rightComponent={<Icon name='select1' type='antdesign' color='white' onPress={() => navigation.navigate('HandleSelectedWord', { item: isBrowsingFolderName })} tvParallaxProperties={undefined}/>}
                 />
                 <FlatList
                     style={{backgroundColor:'black'}}
                     data={props.savedWordList}
                     keyExtractor={(item, index) => 'key'+index}
                     renderItem={savedWordsRenderItem}
-                    ListEmptyComponent={
+                    ListEmptyComponent={      
                         <View style={{alignItems: 'center', marginTop: height*0.2}}>
                             <Text style={{color:'grey', fontSize:20}}>{strings.noCardInFolder}</Text>
                         </View>
@@ -87,7 +87,7 @@ const BrowseFolder = (props) => {
     )
 }
 
-const mapStateToProps = state => {
+const mapStateToProps = (state: any) => {
     return { 
         folderList: state.folderList,
         savedWordList: state.savedWordList,
