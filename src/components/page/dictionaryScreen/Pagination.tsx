@@ -1,10 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Animated, useWindowDimensions } from 'react-native';
 
-const Paginator = ({
-    data,
-    scrollX
-}: any) => {
+const Paginator = ({data, scrollX}: any) => {
     const { width } = useWindowDimensions();
     return (
         <View style={{flexDirection:'row', alignContent:"center", height:20}}>

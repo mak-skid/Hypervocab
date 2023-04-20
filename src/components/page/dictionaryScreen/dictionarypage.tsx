@@ -76,7 +76,7 @@ function DictionaryScreen(props: any) {
 
     const handleShare = useCallback((item) => {
         if (!item) {
-            console.log("passing failed", item);
+            console.log("Share Extension passing failed", item);
             return ;
         }
 
@@ -283,7 +283,7 @@ function DictionaryScreen(props: any) {
                 }
             }
 
-            const CardContent = (index: any) => {
+            const CardContent = (index: number) => {
                 switch (selectedDictionary) {
                     case 'EJ':
                         return (
@@ -312,40 +312,54 @@ function DictionaryScreen(props: any) {
                     case 'ko':
                         */
                     case 'en':
-                        const mappedDifinition = (item: any) => <View>
-                            <Text style={{color: 'grey', fontSize:18}}>{item.partOfSpeech}</Text>
-                            {item.definitions.map((item: any, index: any) =>
-                                <View style={{borderBottomWidth:10}}>
-                                    <Text style={{color:'white', fontSize:18}}>{item.definition}</Text>
-                                    <Text style={{color:'lightgrey', fontStyle:'italic', fontSize:18}}>{item.example}</Text>
-                                    {(item.synonyms.length || item.antonyms.length > 0) &&
-                                        <TouchableOpacity onPress={() => onPressHandler(item)} style={{alignItems:'flex-start'}}>
-                                            {!isThesaurusVisibleIndex.includes(item) &&
-                                            <Icon name='ellipsis1' type='antdesign' color='white' />
-                                            }
-                                            {isThesaurusVisibleIndex.includes(item) &&
-                                                <View style={{flexDirection:'row', flexWrap:'wrap'}}>  
-                                                    {item.synonyms.map((item: any) => <Button buttonStyle={{backgroundColor:"green", borderRadius:40}}
-                                                            onPress={() => {
-                                                                setInputWord(item)
-                                                            }} 
-                                                            title={item} 
-                                                            titleStyle={{color:'white', fontSize: 18}}/>
-                                                    )}
-                                                    {item.antonyms.map((item: any) => <Button buttonStyle={{backgroundColor:"red", borderRadius:40}} 
-                                                            onPress={() => {
-                                                                setInputWord(item)
-                                                            }} 
-                                                            title={item} 
-                                                            titleStyle={{color:'white', fontSize: 18}}/>
-                                                    )}
-                                                </View>
-                                            }
-                                        </TouchableOpacity>
-                                    }
+                        const mappedDifinition = (item: any) => {
+                            return (
+                                <View>
+                                    <Text style={{color: 'grey', fontSize:18}}>{item.partOfSpeech}</Text>
+                                    {item.definitions.map((item: any) => {
+                                        return (
+                                            <View style={{borderBottomWidth:10}}>
+                                                <Text style={{color:'white', fontSize:18}}>{item.definition}</Text>
+                                                <Text style={{color:'lightgrey', fontStyle:'italic', fontSize:18}}>{item.example}</Text>
+                                                {(item.synonyms.length || item.antonyms.length > 0) && (
+                                                    <TouchableOpacity onPress={() => onPressHandler(item)} style={{alignItems:'flex-start'}}>
+                                                        {!isThesaurusVisibleIndex.includes(item) && (
+                                                            <Icon name='ellipsis1' type='antdesign' color='white' />
+                                                        )}
+                                                        {isThesaurusVisibleIndex.includes(item) && (
+                                                            <View style={{flexDirection:'row', flexWrap:'wrap'}}>  
+                                                                {item.synonyms.map((item: any) => {
+                                                                    return (
+                                                                        <Button buttonStyle={{backgroundColor:"green", borderRadius:40}}
+                                                                            onPress={() => {
+                                                                                setInputWord(item)
+                                                                            }} 
+                                                                            title={item} 
+                                                                            titleStyle={{color:'white', fontSize: 18}}
+                                                                        />
+                                                                    )}
+                                                                )}
+                                                                {item.antonyms.map((item: any) => {
+                                                                    return (
+                                                                        <Button buttonStyle={{backgroundColor:"red", borderRadius:40}}
+                                                                            onPress={() => {
+                                                                                setInputWord(item)
+                                                                            }}
+                                                                            title={item} 
+                                                                            titleStyle={{color:'white', fontSize: 18}}
+                                                                        />
+                                                                    )}        
+                                                                )}
+                                                            </View>
+                                                        )}
+                                                    </TouchableOpacity>
+                                                )}
+                                            </View>
+                                        )
+                                    })}
                                 </View>
-                                )}
-                        </View>
+                            )
+                        }
 
                         return (
                             <Card containerStyle={{backgroundColor:'black', width: cardWindowWidth, borderRadius:5}}>
@@ -382,7 +396,7 @@ function DictionaryScreen(props: any) {
                         data={props.cardData}
                         keyExtractor={(item, index) => 'key'+index}
                         showsHorizontalScrollIndicator={false}
-                        renderItem={(index)=> {
+                        renderItem={({item, index})=> {
                             return (
                                 <ScrollView>
                                     <Pressable

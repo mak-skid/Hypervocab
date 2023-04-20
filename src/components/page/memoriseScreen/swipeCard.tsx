@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { View, SafeAreaView, FlatList, Text, ScrollView, Alert, Pressable, StatusBar, Platform} from 'react-native';
+import { View, SafeAreaView, FlatList, Text, ScrollView, Alert, Pressable, StatusBar, Platform, ListRenderItemInfo} from 'react-native';
 import { Header, Icon, Button, Card } from 'react-native-elements';
 import { height, styles, width } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
@@ -9,6 +9,8 @@ import { useFocusEffect } from '@react-navigation/native';
 import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
+import Swiper from "react-native-deck-swiper";
+import { Transaction, ResultSet } from 'react-native-sqlite-storage';
 
 
 const SwipeCard = (props: any) => {
@@ -20,16 +22,17 @@ const SwipeCard = (props: any) => {
     const time = new Date();
 
     const DatabaseAccess = useCallback(() => {
-        UserDatabaseDB.transaction((tx: any) => {
+        UserDatabaseDB.transaction((tx: Transaction) => {
             tx.executeSql(`SELECT item_id, word, mean, meanings, origin, phonetics, level, due_date FROM "${FolderToMemorise}" WHERE (level < 6) AND (due_date < ${time.getTime()} OR due_date IS NULL);`, [],
-            (_: any, results: any) => {
+            (tx: Transaction, results: ResultSet) => {
                 console.log('Got a saved list in the folder: ' + FolderToMemorise);
                 const savedWord = results.rows.raw()
                 props.updateSavedWordList(savedWord)
                 setShowContent(false);
             },
-            () => alert(strings.errorOpeningFolder)
-            )
+            () => {
+                alert(strings.errorOpeningFolder)
+            })
         })
     },[reloadScreen]);
 
@@ -139,9 +142,7 @@ const SwipeCard = (props: any) => {
     const [currentIndex, setCurrentIndex] = useState(0),
           [showContent, setShowContent] = useState(false);
 
-    const viewableItemsChanged = useRef(({
-        viewableItems
-    }: any) => {
+    const viewableItemsChanged = useRef(({viewableItems}: any) => {
         setCurrentIndex(viewableItems[0].index)
     }).current;
 
@@ -149,7 +150,8 @@ const SwipeCard = (props: any) => {
 
     const refContainer = useRef<any>(null);
 
-    const mainRenderItem = ({item,index}: any) => {
+    const mainRenderItem = ({item, index}: any) => {
+    //const mainRenderItem = (card: any) => {
         const onPressHandler = (index: any) => {
             if (savedWordList.length === 1) {
                 Alert.alert(strings.finished, strings.finishedDetail);
@@ -261,7 +263,8 @@ const SwipeCard = (props: any) => {
                     leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('MemoriseScreen')} tvParallaxProperties={undefined}/>}
                     centerComponent={{text: strings.memorise, style:{color: 'white', fontSize:20}}}
                     rightComponent={{text: (props.savedWordList.length != 0) ? /*(currentIndex+1) + '/'*/ props.savedWordList.length : null, style:{color: 'white', fontSize:20}}}
-                    />
+                />
+                
                 <FlatList
                     style={{backgroundColor:'black'}}
                     horizontal={true}
@@ -281,6 +284,22 @@ const SwipeCard = (props: any) => {
                         </View>
                     }
                 />
+                {/*
+                <Swiper
+                    cards={savedWordList}
+                    renderCard={mainRenderItem}
+                    keyExtractor={(item) => 'key'+item}
+                    onSwipedAll={() => {
+                        <View style={{alignItems: 'center', margin: width*0.1}}>
+                            <Text style={{color:'grey', fontSize:20}}>{strings.noCardInFolder}</Text>
+                        </View>
+                    }}
+                    ref={refContainer}
+                    cardIndex={0}
+                    backgroundColor={'black'}
+                    stackSize= {3}
+                />
+                */}
                 <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />                
             </SafeAreaView>
         </View>
