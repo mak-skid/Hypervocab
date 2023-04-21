@@ -256,9 +256,7 @@ function DictionaryScreen(props: any) {
 
         const scrollX = useRef(new Animated.Value(0)).current;
 
-        const viewableItemsChanged = useRef(({
-            viewableItems
-        }: any) => {
+        const viewableItemsChanged = useRef(({viewableItems}: any) => {
             setCurrentIndex(viewableItems[0].index)
             console.log(viewableItems);
         }).current;
