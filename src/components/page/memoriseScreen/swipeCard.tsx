@@ -11,6 +11,7 @@ import { strings } from '../strings';
 import { BannerAd, TestIds } from '@react-native-admob/admob';
 import Swiper from "react-native-deck-swiper";
 import { Transaction, ResultSet } from 'react-native-sqlite-storage';
+import { MainContent } from './mainContent';
 
 
 const SwipeCard = (props: any) => {
@@ -28,7 +29,7 @@ const SwipeCard = (props: any) => {
                 console.log('Got a saved list in the folder: ' + FolderToMemorise);
                 const savedWord = results.rows.raw()
                 props.updateSavedWordList(savedWord)
-                setShowContent(false);
+                setShowContent(0);
             },
             () => {
                 alert(strings.errorOpeningFolder)
@@ -140,94 +141,30 @@ const SwipeCard = (props: any) => {
     }
 
     const [swipable, setSwipable] = useState(false),
-          [showContent, setShowContent] = useState(false);   
+          [showContent, setShowContent] = useState(0); // the type is number so that Swiper's key can take it
     
     const refContainer = useRef<any>(null);
-    
-    const mainRenderItem = (item: any, index: any) => {
-        
+
+    const mainRenderItem = (item: any, index: number) => {
+        setSwipable(false)
+
         // when the item is undefined, it means that the list is empty
         if (item == undefined) {
             return (
-                <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-                    <Text style={{color:'white', fontSize:18}}>{strings.noCardInFolder}</Text>
-                </View>
-            )
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: 'white', fontSize: 18 }}>{strings.noCardInFolder}</Text>
+                </View>   
+            );
         }
-    
+        {/*
         const onPressHandler = (index: any) => {
             if (savedWordList.length === 1) {
                 Alert.alert(strings.finished, strings.finishedDetail);
             } else {
-                refContainer.current.scrollToIndex({animated: true, index: index});
+                refContainer.current.scrollToIndex({ animated: true, index: index });
             }
-        }
-        
-        const MainContent = () => {
-            if (!showContent) {
-                return (
-                    <View style={{justifyContent:'center', alignItems:'center', flex:1}}>
-                        <Text style={{color:'white', fontSize:20}}>{strings.answer}</Text>
-                    </View>
-                )
-            } else {
-                if (item.mean) {
-                    return (
-                        <View>
-                            <ScrollView showsVerticalScrollIndicator={true}>  
-                                <Text style={{color:'white',fontSize:18}}>
-                                    {item.mean.replaceAll("/","\n\n")}
-                                </Text>
-                            </ScrollView>
-                        </View>
-                    )
-                } else {
-                    const parsedMeanings = JSON.parse(unescape(item.meanings))
-                    const parsedPhonetics = JSON.parse(unescape(item.phonetics))
-        
-                    return (    
-                        <View>
-                            {parsedPhonetics.map((item: any) => 
-                                <View style={{flexDirection: 'row'}}>  
-                                    {item.text != undefined && <Text style={{color:'white', fontSize:18}} key={index}>| {item.text} |</Text>}
-                                    {item.audio != undefined && <AudioPlayer url={item.audio}/>}
-                                </View>
-                            )}
-                            <FlatList
-                                data={parsedMeanings}
-                                scrollEnabled={false}
-                                keyExtractor={(index) => 'key'+index}
-                                renderItem={({item, index})=> {
-                                    const childData = parsedMeanings[index].definitions;
-                                    return (           
-                                        <View>
-                                            <Text style={{color: 'grey', fontSize:18, marginTop: 10}}>{item.partOfSpeech}</Text>
-                                            <FlatList
-                                                data={childData}
-                                                scrollEnabled={false}
-                                                keyExtractor={(index)=> 'key(childData)' + index}
-                                                renderItem={({item}) => {
-                                                    return (
-                                                        <View>
-                                                            <Text style={{color:'white',fontSize:18, borderRadius:5, borderColor:'black', borderWidth:1}}>{item.definition}</Text>
-                                                            <Text style={{color:'grey',fontSize:18, fontStyle: 'italic', borderRadius:5, borderColor:'black', borderWidth:1}}> 
-                                                                {item.example} 
-                                                            </Text>
-                                                        </View>
-                                                    )
-                                                }}
-                                            /> 
-                                        </View>
-                                    )
-                                }}
-                            /> 
-                            <Text style={{color:'white', fontWeight: 'bold', fontSize:18, marginTop:10}}>{strings.origin}</Text>
-                            <Text style={{color:'white',fontSize:18}}>{item.origin}</Text>
-                        </View>
-                    );
-                }
-            }
-        }
+        };
+        */}
 
         return (
             <View style={{
@@ -237,22 +174,15 @@ const SwipeCard = (props: any) => {
                 borderRadius: 5,
                 borderColor: 'white',
                 borderWidth: 1,
-            }}>
-                <Pressable 
-                    onPress={() => {
-                        setShowContent(true)
-                        setSwipable(true)
-                    }}
-                    disabled={showContent} 
-                    style={{height: height*0.65}} 
-                >
-                    <ScrollView showsVerticalScrollIndicator={false} scrollEnabled={showContent} contentContainerStyle={{flex:1, flexDirection:'column'}}>
-                        <Text style={{color:'white',fontSize:30, fontWeight:"bold"}}>
-                            {item.word}
-                        </Text>
-                        <MainContent />          
-                    </ScrollView>
-                </Pressable>
+            }}> 
+                <ScrollView>
+                    <Text style={{color:'white',fontSize:30, fontWeight:"bold"}}>
+                        {item.word}
+                    </Text>
+                    <Pressable onLongPress={() => setSwipable(true)} >
+                        <MainContent item={item} index={index} showContent={!!showContent} />
+                    </Pressable>
+                </ScrollView>     
             </View>
         )
     }
@@ -271,22 +201,29 @@ const SwipeCard = (props: any) => {
                     centerComponent={{text: strings.memorise, style:{color: 'white', fontSize:20}}}
                     rightComponent={{text: (props.savedWordList.length != 0) ? /*(currentIndex+1) + '/'*/ props.savedWordList.length : null, style:{color: 'white', fontSize:20}}}
                 />
-                <View> 
+                <View>
                 {/* wrapping Swiper with View so that it looks pretty */}
                     <Swiper
                         cards={savedWordList}
-                        renderCard={mainRenderItem}
+                        renderCard={(cardItem: any, cardIndex: number) => mainRenderItem(cardItem, cardIndex)}
                         keyExtractor={index => 'swiperKey'+index}
-                        key={savedWordList.length}
-                        cardIndex={0}
+                        key={showContent}
                         backgroundColor={'black'}
-                        stackSize={3}
+                        stackSize={1}
                         horizontalSwipe={swipable}
                         verticalSwipe={swipable}
                         disableBottomSwipe={true}
                         onSwipedLeft={(index)=> updateLevelNo({item_id: savedWordList[index].item_id})}
                         onSwipedRight={(index) => updateLevelGood({item_id: savedWordList[index].item_id, level: savedWordList[index].level})}
                         onSwipedTop={(index) => updateLevelSoSo({item_id: savedWordList[index].item_id, level: savedWordList[index].level})}
+                        onTapCard={(index) => [setShowContent(1)]}
+                        onSwipedAll={() => {
+                            return (
+                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                                    <Text style={{ color: 'white', fontSize: 18 }}>{strings.noCardInFolder}</Text>
+                                </View>   
+                            )
+                        }}
                     />  
                 </View>
             </SafeAreaView>
@@ -307,7 +244,3 @@ const mapDispatchToProps = {updateFolderList, updateSavedWordList};
     
     
 export default connect(mapStateToProps, mapDispatchToProps) (SwipeCard);    
-
-function MainContent() {
-    throw new Error('Function not implemented.');
-}
