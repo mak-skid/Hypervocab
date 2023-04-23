@@ -12,6 +12,7 @@ import { BannerAd, TestIds } from '@react-native-admob/admob';
 import Swiper from "react-native-deck-swiper";
 import { Transaction, ResultSet } from 'react-native-sqlite-storage';
 import { MainContent } from './mainContent';
+import OverlayLabel from './overlayLabel';
 
 
 const SwipeCard = (props: any) => {
@@ -40,10 +41,10 @@ const SwipeCard = (props: any) => {
     useFocusEffect(DatabaseAccess);
     
     const updateLevelNo = ({item_id}: any) => {   
-        UserDatabaseDB.transaction((tx: any) => {
+        UserDatabaseDB.transaction((tx: Transaction) => {
             tx.executeSql(
                 `UPDATE "${FolderToMemorise}" SET level = 1, due_date = ${time.setMinutes(time.getMinutes()+1)} WHERE item_id = ${item_id};`, [],
-            (_: any, results: any) => {
+            (_, results: ResultSet) => {
                 console.log('Updated: ' + FolderToMemorise);
                 setReloadScreen(true);
                 DatabaseAccess();
@@ -53,15 +54,15 @@ const SwipeCard = (props: any) => {
         })
     }
 
-    const updateLevelSoSo = ({item_id,level}: any) => {
-        UserDatabaseDB.transaction((tx: any) => {
+    const updateLevelSoSo = ({item_id, level}: any) => {
+        UserDatabaseDB.transaction((tx: Transaction) => {
             switch (level) {
                 case 0:
                 case 1:
                 case 2:
                     tx.executeSql(
                         `UPDATE "${FolderToMemorise}" SET level = 2, due_date = ${time.setMinutes(time.getMinutes()+10)} WHERE item_id = ${item_id};`, [],
-                        (_: any, results: any) => {
+                        (_, results: ResultSet) => {
                             console.log('Updated: ' + FolderToMemorise);
                             setReloadScreen(true);
                         },
@@ -73,7 +74,7 @@ const SwipeCard = (props: any) => {
                 case 5: 
                     tx.executeSql(
                         `UPDATE "${FolderToMemorise}" SET level = 3, due_date = ${time.setDate(time.getDate()+1)} WHERE item_id = ${item_id};`, [],
-                        (_: any, results: any) => {
+                        (_, results: ResultSet) => {
                             console.log('Updated: ' + FolderToMemorise);
                             setReloadScreen(true);
                         },
@@ -87,7 +88,7 @@ const SwipeCard = (props: any) => {
         })
     }
 
-    const updateLevelGood = ({item_id,level}: any) => {
+    const updateLevelGood = ({item_id, level}: any) => {
         UserDatabaseDB.transaction((tx: any) => {
             switch (level) {
                 case 0:
@@ -151,7 +152,7 @@ const SwipeCard = (props: any) => {
         // when the item is undefined, it means that the list is empty
         if (item == undefined) {
             return (
-                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <View style={{ flex:0.8, justifyContent: 'center', alignItems: 'center' }}>
                     <Text style={{ color: 'white', fontSize: 18 }}>{strings.noCardInFolder}</Text>
                 </View>   
             );
@@ -199,9 +200,9 @@ const SwipeCard = (props: any) => {
                     containerStyle={{ marginTop: ((StatusBar.currentHeight || 0) * -1) }} 
                     leftComponent={<Icon name='arrowleft' type='antdesign' color='white' onPress={() => navigation.navigate('MemoriseScreen')} tvParallaxProperties={undefined}/>}
                     centerComponent={{text: strings.memorise, style:{color: 'white', fontSize:20}}}
-                    rightComponent={{text: (props.savedWordList.length != 0) ? /*(currentIndex+1) + '/'*/ props.savedWordList.length : null, style:{color: 'white', fontSize:20}}}
+                    rightComponent={{text: (props.savedWordList.length != 0) ? /*(currentIndex+1) + '/'*/ savedWordList.length : null, style:{color: 'white', fontSize:20}}}
                 />
-                <View>
+                <View style={{backgroundColor:'orange'}}>
                 {/* wrapping Swiper with View so that it looks pretty */}
                     <Swiper
                         cards={savedWordList}
@@ -218,11 +219,39 @@ const SwipeCard = (props: any) => {
                         onSwipedTop={(index) => updateLevelSoSo({item_id: savedWordList[index].item_id, level: savedWordList[index].level})}
                         onTapCard={(index) => [setShowContent(1)]}
                         onSwipedAll={() => {
-                            return (
-                                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                                    <Text style={{ color: 'white', fontSize: 18 }}>{strings.noCardInFolder}</Text>
-                                </View>   
-                            )
+                            Alert.alert(strings.finished, strings.finishedDetail, [{text: 'OK', onPress: () =>{navigation.navigate('MemoriseScreen')}}])
+                            
+                        }}
+                        overlayLabels={{
+                            left: {
+                                title: 'NOPE',
+                                element: <OverlayLabel label="NOPE" color="#E5566D" />,
+                                style: {
+                                    wrapper: styles.overlayWrapper,
+                                },
+                            },
+                            top: {
+                                title: 'SO-SO',
+                                element: <OverlayLabel label="SO-SO" color="#f5d623" />,
+                                style: {
+                                    wrapper: {
+                                        ...styles.overlayWrapper,
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                    },
+                                },
+                            },
+                            right: {
+                                title: 'GOOD',
+                                element: <OverlayLabel label="GOOD" color="#4CCC93" />,
+                                style: {
+                                    wrapper: {
+                                        ...styles.overlayWrapper,
+                                        alignItems: 'flex-start',
+                                        marginLeft: 30,
+                                    },
+                                },
+                            },
                         }}
                     />  
                 </View>

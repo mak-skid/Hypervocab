@@ -32,5 +32,23 @@ export const styles = StyleSheet.create({
         alignItems:'center',
         marginTop: 20,
         backgroundColor:'black',
-    }
+    },
+    overlayLabel: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        borderRadius: 10,
+    },
+    overlayLabelText: {
+        fontSize: 35,
+        fontFamily: 'Avenir',
+        textAlign: 'center',
+    },
+    overlayWrapper: {
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-start',
+        marginTop: 30,
+        marginLeft: -30,
+    },
 })
