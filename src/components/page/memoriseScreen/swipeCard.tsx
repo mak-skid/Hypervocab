@@ -176,12 +176,18 @@ const SwipeCard = (props: any) => {
                 borderColor: 'white',
                 borderWidth: 1,
             }}> 
-                <ScrollView>
-                    <Text style={{color:'white',fontSize:30, fontWeight:"bold"}}>
-                        {item.word}
-                    </Text>
+                <ScrollView scrollEnabled={!!showContent}>
+                    <Text style={{color:'white',fontSize:30, fontWeight:"bold",}}>{item.word}</Text>
                     <Pressable onLongPress={() => setSwipable(true)} >
-                        <MainContent item={item} index={index} showContent={!!showContent} />
+                        {!!!showContent ? 
+                            <View style={{justifyContent:'center', alignItems:'center', height: height*0.55}}>
+                                <Pressable onPress={() => setShowContent(1)}>
+                                    <Text style={{color:'white', fontSize:20}}>{strings.answer}</Text>
+                                </Pressable>
+                            </View>
+                        :
+                            <MainContent item={item} index={index} showContent={!!showContent} />
+                        }
                     </Pressable>
                 </ScrollView>     
             </View>
