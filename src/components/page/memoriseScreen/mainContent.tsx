@@ -1,9 +1,7 @@
-import React, {  } from 'react';
-import { View, FlatList, Text, ScrollView, Alert, Pressable, SafeAreaView } from 'react-native';
+import React from 'react';
+import { View, FlatList, Text, ScrollView } from 'react-native';
 import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
-import { height } from '../style';
-import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 export function MainContent(props: any) {
     const {item, index, showContent} = props

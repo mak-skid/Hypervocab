@@ -1,16 +1,14 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { View, SafeAreaView, FlatList, Text, ScrollView, Alert, Pressable, StatusBar, Platform, ListRenderItemInfo} from 'react-native';
-import { Header, Icon, Button, Card } from 'react-native-elements';
-import { height, styles, width } from '../style';
+import React, { useState, useRef, useCallback } from 'react';
+import { View, SafeAreaView, Text, ScrollView, Alert, Pressable, StatusBar, Platform} from 'react-native';
+import { Header, Icon } from 'react-native-elements';
+import { height, styles } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
 import { connect } from 'react-redux';
 import { UserDatabaseDB } from '../../openDatabase';
 import { useFocusEffect } from '@react-navigation/native';
-import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
-import { BannerAd, TestIds } from '@react-native-admob/admob';
 import Swiper from "react-native-deck-swiper";
-import { Transaction, ResultSet } from 'react-native-sqlite-storage';
+import { Transaction, ResultSet } from 'react-native-sqlite-storage'
 import { MainContent } from './mainContent';
 import OverlayLabel from './overlayLabel';
 

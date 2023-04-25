@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { View, SafeAreaView, FlatList, Text, ScrollView, TouchableOpacity, Alert, StatusBar, Platform } from 'react-native';
-import { Header, Icon } from 'react-native-elements';
+import { Header, Icon, FAB } from 'react-native-elements';
 import { styles, height } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
 import { connect } from 'react-redux';
-import { FAB } from 'react-native-elements';
 import { useFocusEffect } from '@react-navigation/native';
 import { UserDatabaseDB } from '../../openDatabase';
 import { strings } from '../strings';

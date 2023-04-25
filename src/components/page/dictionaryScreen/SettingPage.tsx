@@ -9,7 +9,6 @@ import { version } from '../../../../package.json';
 import { DictionaryList } from './DictionaryList';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { strings } from '../strings';
-import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 
 const SettingPage = (props: any) => {
@@ -179,7 +178,6 @@ const SettingPage = (props: any) => {
                 />
                 <ModalForSetting />
             </SafeAreaView>
-            <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
         </View>
     )
 }

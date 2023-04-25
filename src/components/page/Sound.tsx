@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, Alert } from 'react-native';
-import { Icon } from 'react-native-elements/dist/icons/Icon';
+import { Icon } from '@rneui/themed/dist/index';
 import { strings } from './strings';
 
 export const AudioPlayer = (props: any) => {

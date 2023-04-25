@@ -1,7 +1,7 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { NavigationContainer } from '@react-navigation/native';
-import { Icon } from  'react-native-elements';
+import { NavigationContainer } from '@react-navigation/native'
+import { Icon } from 'react-native-elements';
 import { SafeAreaView } from 'react-native';
 import { FoldersStackScreen } from './FolderScreenNavigation';
 import { MemoriseStackScreen } from './MemoriseScreenNavigation';

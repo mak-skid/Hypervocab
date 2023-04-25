@@ -1,13 +1,11 @@
 import React, { useState } from 'react';
-import { View, ScrollView, Alert, StatusBar, Platform } from 'react-native';
+import { View, ScrollView, Alert, StatusBar, Platform, TextInput } from 'react-native';
 import { Header, Icon, Card } from 'react-native-elements';
 import { styles, width } from '../style';
-import { TextInput } from 'react-native';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
 import { connect } from 'react-redux';
 import { UserDatabaseDB } from '../../openDatabase';
 import { strings } from '../strings';
-import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 
 const CustomCard = (props: any) => {
@@ -80,7 +78,6 @@ const CustomCard = (props: any) => {
                 </Card>
                 </ScrollView>
             </View>
-            <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
         </View>
     )
 }

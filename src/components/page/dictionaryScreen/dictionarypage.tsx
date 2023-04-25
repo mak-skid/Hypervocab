@@ -1,22 +1,19 @@
 import React, { useState, useRef, useCallback, useEffect } from 'react';
-import { View, SafeAreaView, TextInput, TouchableOpacity, ScrollView, Dimensions, Modal, FlatList, Alert, Animated, StatusBar, Pressable, Platform} from 'react-native';
-import RNPickerSelect from 'react-native-picker-select';
+import { View, SafeAreaView, TextInput, TouchableOpacity, ScrollView, Dimensions, Modal, FlatList, Alert, Animated, StatusBar, Pressable, Platform, ActivityIndicator } from 'react-native';
 import { styles, width, height } from '../style';
 import { connect } from 'react-redux';
 import { updateCardData, updateFolderList, updateSavedWordList, updateFavDictionaries } from '../../../actions';
-import { Card, Button, Text } from 'react-native-elements';
+import { Card, Button, Text, FAB, Icon } from '@rneui/themed/dist/index';
 import { itemBoxStyles } from '../../ItemBox';
 import { ejdictdb, UserDatabaseDB } from '../../openDatabase';
-import { FAB } from 'react-native-elements';
 import Paginator from './Pagination';
-import { ActivityIndicator } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Icon } from 'react-native-elements/dist/icons/Icon';
 import { DictionaryList } from './DictionaryList';
 import { useFocusEffect } from '@react-navigation/native';
 import ShareMenu from 'react-native-share-menu';
 import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
+import RNPickerSelect from 'react-native-picker-select';
 
 
 function DictionaryScreen(props: any) {
@@ -520,7 +517,7 @@ function DictionaryScreen(props: any) {
                         items={favDictionaries}
                         value={selectedDictionary}
                         useNativeAndroidPickerStyle={false}
-                    />       
+                    />    
                 </View>
                 <Cards />
                 <FAB icon={{name: 'settings', type:'ionicons', color:'white'}} 
