@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { View, FlatList, Text, ScrollView, Alert, StatusBar, Platform} from 'react-native';
+import { View, FlatList, Text, ScrollView, Alert, StatusBar, Platform, TextInput } from 'react-native';
 import { Header, Icon, Card } from 'react-native-elements';
 import { styles, width } from '../style';
-import { TextInput } from 'react-native';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
 import { connect } from 'react-redux';
 import { UserDatabaseDB } from '../../openDatabase';
-import RNPickerSelect from 'react-native-picker-select';
+import RNPickerSelect  from 'react-native-picker-select';
 import { AudioPlayer } from '../Sound';
 import { strings } from '../strings';
 

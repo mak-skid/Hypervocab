@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions, Platform } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native'
 
 export const width = Dimensions.get('window').width
 export const height = Dimensions.get("window").height
@@ -32,5 +32,23 @@ export const styles = StyleSheet.create({
         alignItems:'center',
         marginTop: 20,
         backgroundColor:'black',
-    }
+    },
+    overlayLabel: {
+        justifyContent: 'center',
+        alignItems: 'center',
+        padding: 10,
+        borderRadius: 10,
+    },
+    overlayLabelText: {
+        fontSize: 35,
+        fontFamily: 'Avenir',
+        textAlign: 'center',
+    },
+    overlayWrapper: {
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+        justifyContent: 'flex-start',
+        marginTop: 30,
+        marginLeft: -30,
+    },
 })

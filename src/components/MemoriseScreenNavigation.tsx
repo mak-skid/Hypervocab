@@ -1,4 +1,4 @@
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator } from '@react-navigation/stack';
 import MemoriseScreen from './page/memoriseScreen/memorisepage';
 import SwipeCard from "./page/memoriseScreen/swipeCard";
 import React from 'react';

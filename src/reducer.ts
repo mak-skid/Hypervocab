@@ -5,7 +5,7 @@ export interface RootState {
     cardData: string,
     favDictionaries: string,
     folderList: string,
-    savedWordList: string | number
+    savedWordList: string | number,
 }
 
 const initialState = {

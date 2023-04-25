@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, SafeAreaView, FlatList, StyleSheet, Text, ScrollView, Alert, StatusBar, Platform} from 'react-native';
+import { View, SafeAreaView, FlatList, StyleSheet, Text, ScrollView, Alert, StatusBar, Platform } from 'react-native';
 import { Header, Icon } from 'react-native-elements';
 import { styles, width, height } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
@@ -8,7 +8,6 @@ import { ItemBox } from '../../ItemBox';
 import prompt from 'react-native-prompt-android';
 import { UserDatabaseDB } from '../../openDatabase';
 import { strings } from '../strings';
-import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 
 function FolderScreen(props: any) {
@@ -176,7 +175,6 @@ function FolderScreen(props: any) {
                     }
                 />   
                 </SafeAreaView>
-                <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
         </View>         
     );
 }

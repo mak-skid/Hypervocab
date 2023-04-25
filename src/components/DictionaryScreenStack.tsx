@@ -1,4 +1,4 @@
-import { createStackNavigator } from "@react-navigation/stack";
+import { createStackNavigator } from '@react-navigation/stack';
 import DictionaryScreen from './page/dictionaryScreen/dictionarypage'
 import SettingPage from "./page/dictionaryScreen/SettingPage";
 import React from 'react';

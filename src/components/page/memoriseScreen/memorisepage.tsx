@@ -6,7 +6,6 @@ import { updateFolderList, updateSavedWordList } from '../../../actions';
 import { connect } from 'react-redux';
 import { itemBoxStyles } from '../../ItemBox';
 import { strings } from '../strings';
-import { BannerAd, TestIds } from '@react-native-admob/admob';
 
 function MemoriseScreen(props: any) {
     const {folderList, savedWordList, navigation} = props
@@ -49,7 +48,6 @@ function MemoriseScreen(props: any) {
                         </View>
                     }
                 /> 
-                <BannerAd size="ADAPTIVE_BANNER" unitId={TestIds.BANNER} />
             </SafeAreaView>
         </View>  
     );
