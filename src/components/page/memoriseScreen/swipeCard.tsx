@@ -1,5 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { View, SafeAreaView, Text, ScrollView, Alert, Pressable, StatusBar, Platform} from 'react-native';
+import { View, SafeAreaView, Text, Alert, Pressable, StatusBar, Platform} from 'react-native';
+import { ScrollView } from 'react-native-gesture-handler';
 import { Header, Icon } from 'react-native-elements';
 import { height, styles } from '../style';
 import { updateFolderList, updateSavedWordList } from '../../../actions';
@@ -11,6 +12,7 @@ import Swiper from "react-native-deck-swiper";
 import { Transaction, ResultSet } from 'react-native-sqlite-storage'
 import { MainContent } from './mainContent';
 import OverlayLabel from './overlayLabel';
+
 
 
 const SwipeCard = (props: any) => {
