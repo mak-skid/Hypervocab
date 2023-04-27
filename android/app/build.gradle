@@ -150,8 +150,8 @@ android {
         applicationId "com.hypervocab"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "1.0.1"
+        versionCode 3
+        versionName "1.1.0"
     }
     splits {
         abi {
@@ -237,12 +237,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    implementation project(':react-native-share-menu')
-
-    implementation project(':react-native-admob_admob')
-
-    implementation "com.google.android.gms:play-services-ads:20.5.0" //added for admob
 }
 
 // Run this once to be able to run the application with BUCK
