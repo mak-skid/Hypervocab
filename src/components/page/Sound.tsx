@@ -2,18 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { TouchableOpacity, Alert } from 'react-native';
 import { Icon } from '@rneui/themed/dist/index';
 import { strings } from './strings';
+import Sound from 'react-native-sound';
 
 export const AudioPlayer = (props: any) => {
     const { url } = props
     console.log("url: ", url);
 
-    var Sound = require('react-native-sound');
-
     Sound.setCategory('Playback');
 
-    var audio = new Sound(
-        `${url}`,
-        null,
+    const [playing, setPlaying] = useState<boolean>();
+    
+    const audio = new Sound(`${url}`, Sound.MAIN_BUNDLE,
         (error: any) => {
             if (error) {
                 console.log('Failed to load the sound.', url);
@@ -22,17 +21,10 @@ export const AudioPlayer = (props: any) => {
             }
         }
     )
-    
-    const [playing, setPlaying] = useState<boolean>();
-    
-    useEffect(() => {
-        audio.setVolume(1);
-        return () => {
-            audio.release();
-        };
-    }, []);
 
     const playPause = () => {
+        
+
         if (audio.isPlaying()) {
             audio.pause();
             setPlaying(false);

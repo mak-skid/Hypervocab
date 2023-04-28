@@ -102,6 +102,8 @@ def getPassword(String currentUser, String keyChain) {
       stdout.toString().trim()
 }
 
+def pass = getPassword('Mak', 'android_keystore')
+
 android {
     ndkVersion rootProject.ext.ndkVersion
 

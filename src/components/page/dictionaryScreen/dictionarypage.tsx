@@ -139,6 +139,7 @@ function DictionaryScreen(props: any) {
                 */
             case 'en':
                 try {
+                    console.log('HTTP request')
                     const data = await fetch(`https://api.dictionaryapi.dev/api/v2/entries/${selectedDictionary}/${inputWord}`, 
                         {
                             signal: controller.signal,
@@ -220,7 +221,7 @@ function DictionaryScreen(props: any) {
                             "${stringifiedMeanings}");`,[],
                     () => {
                         console.log('inserted a word to a folder');
-                        setReloadScreen(true);
+                        //setReloadScreen(true);
                         setModalVisible(false);
                         Alert.alert(strings.saved, strings.successfullySavedTo + folderToInsert + strings.successfullySavedToJapanese);
                     }, 
@@ -235,7 +236,7 @@ function DictionaryScreen(props: any) {
                             "${props.cardData[cardIndex].mean.replaceAll("/","\n\n")}");`,[],
                     () => {
                         console.log('inserted a word to a folder');
-                        setReloadScreen(true);
+                        //setReloadScreen(true);
                         setModalVisible(false);
                         Alert.alert(strings.saved, strings.successfullySavedTo + folderToInsert + strings.successfullySavedToJapanese);
                     }, 
